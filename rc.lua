@@ -275,10 +275,15 @@ for s in screen do
                    fg = background,
                    {
                       widget = awful.widget.watch('checkupdates', 3600, function (widget, out)
-                                                     if out == "" then
-                                                        widget:set_text(" Updates not found ")
+                                                     local updateCount = 0
+                                                     for str in string.gmatch(out, "\n") do
+                                                        updateCount = updateCount + 1
+                                                     end
+
+                                                     if updateCount > 0 then
+                                                        widget:set_text(" "..tostring(updateCount).." updates ")
                                                      else
-                                                        widget:set_text("Updates found, update your code")
+                                                        widget:set_text(" Updates not found ")
                                                      end
                       end),
                    },
@@ -437,7 +442,7 @@ globalkeys = gears.table.join(
 
     awful.key({modkey}, "e",
        function ()
-          awful.spawn("emacs")
+          awful.spawn("emacsclient -c --eval '(load-file \"~/.emacs.d/init.el\")'")
        end,
        {decription = "Run emacs", group = "applications"}
     ),
@@ -456,7 +461,14 @@ globalkeys = gears.table.join(
           keyboardLayout = keyboardLayout == 'us' and 'ru' or 'us'
        end,
        {description = "Change layout", group = "applications"}
-    )
+    ),
+
+    -- pavucontrol
+    awful.key({modkey, "Shift"}, "v",
+       function ()
+          awful.spawn("pavucontrol")
+       end,
+       {description = "Open pavucontrol", group = "applications"})
 )
 
 clientkeys = gears.table.join(
