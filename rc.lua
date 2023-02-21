@@ -17,6 +17,9 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
+-- local lain = require("lain")
+local testLayout = require "mylayout"
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -50,10 +53,13 @@ editor_cmd = terminal .. " -e " .. editor
 modkey = "Mod4"
 altKey = "Mod1"
 
+
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
     awful.layout.suit.floating,
     awful.layout.suit.tile,
+    -- testLayout,
+    -- lain.layout.uselesstile,
     -- awful.layout.suit.tile.left,
     -- awful.layout.suit.tile.bottom,
     -- awful.layout.suit.tile.top,
@@ -247,77 +253,106 @@ for s in screen do
 
     end
 
-    -- Add widgets to the wibox
-    s.mywibox:setup {
-       widget = wibox.container.margin,
-       margins = 10,
-       {
-          widget = wibox.container.background,
-          bg = background,
+    if (s.index == 1) then
+       -- Add widgets to the wibox
+       s.mywibox:setup {
+          widget = wibox.container.margin,
+          margins = 10,
           {
-            layout = wibox.layout.align.horizontal,
-            {
-                layout = wibox.layout.fixed.horizontal,
-                s.mytaglist,
-                { -- empty textbox instead of spacing widget
-                   widget = wibox.widget.textbox,
-                   text = "  "
-                }
-            },
-            s.mytasklist,
-            {
-                layout = wibox.layout.fixed.horizontal,
-
-                -- Updates
+             widget = wibox.container.background,
+             bg = background,
+             {
+                layout = wibox.layout.align.horizontal,
                 {
-                   widget = wibox.container.background,
-                   bg = violet,
-                   fg = background,
-                   {
-                      widget = awful.widget.watch('checkupdates', 3600, function (widget, out)
-                                                     local updateCount = 0
-                                                     for str in string.gmatch(out, "\n") do
-                                                        updateCount = updateCount + 1
-                                                     end
+                   layout = wibox.layout.fixed.horizontal,
+                   s.mytaglist,
+                   { -- empty textbox instead of spacing widget
+                      widget = wibox.widget.textbox,
+                      text = "  "
+                   }
+                },
+                s.mytasklist,
+                {
+                   layout = wibox.layout.fixed.horizontal,
 
-                                                     if updateCount > 0 then
-                                                        widget:set_text(" "..tostring(updateCount).." updates ")
-                                                     else
-                                                        widget:set_text(" Updates not found ")
-                                                     end
-                      end),
+                   -- Updates
+                   {
+                      widget = wibox.container.background,
+                      bg = violet,
+                      fg = background,
+                      {
+                         widget = awful.widget.watch('checkupdates', 3600, function (widget, out)
+                                                        local updateCount = 0
+                                                        for str in string.gmatch(out, "\n") do
+                                                           updateCount = updateCount + 1
+                                                        end
+
+                                                        if updateCount > 0 then
+                                                           widget:set_text(" Updates: "..tostring(updateCount).." ")
+                                                        else
+                                                           widget:set_text(" Updates not found ")
+                                                        end
+                         end),
+                      },
                    },
-                },
-                -- Memory
-                {
-                   widget = wibox.container.background,
-                   bg = blue,
-                   fg = background,
+                   -- Memory
                    {
-                      widget = awful.widget.watch('free -m', 1, function (widget, out)
-                                                     local total = string.match(out, "%d+")
-                                                     local totalCharNum = string.find(out, "%d+")
-                                                     local used = string.match(out, "%d+", totalCharNum + 5)
-                                                     widget:set_text(" Memory: "..used.." MB / "..total.." MB ")
-                      end),
-                   }
-                },
+                      widget = wibox.container.background,
+                      bg = blue,
+                      fg = background,
+                      {
+                         widget = awful.widget.watch('free -m', 1, function (widget, out)
+                                                        local total = string.match(out, "%d+")
+                                                        local totalCharNum = string.find(out, "%d+")
+                                                        local used = string.match(out, "%d+", totalCharNum + 5)
+                                                        widget:set_text(" Memory: "..used.." MB / "..total.." MB ")
+                         end),
+                      }
+                   },
 
-                {
-                   widget = wibox.container.background,
-                   bg = majenta,
-                   fg = background,
                    {
-                      widget = mykeyboardlayout
-                   }
-                },
-                wibox.widget.systray(),
-                mytextclock,
-                s.mylayoutbox,
-            }
+                      widget = wibox.container.background,
+                      bg = majenta,
+                      fg = background,
+                      {
+                         widget = mykeyboardlayout
+                      }
+                   },
+                   wibox.widget.systray(),
+                   mytextclock,
+                   s.mylayoutbox,
+                }
+             }
           }
        }
-    }
+    else
+       s.mywibox:setup {
+          widget = wibox.container.margin,
+          margins = 10,
+          {
+             widget = wibox.container.background,
+             bg = background,
+             {
+                layout = wibox.layout.align.horizontal,
+                {
+                   layout = wibox.layout.fixed.horizontal,
+                   s.mytaglist,
+                   { -- empty textbox instead of spacing widget
+                      widget = wibox.widget.textbox,
+                      text = "  "
+                   }
+                },
+                s.mytasklist,
+                {
+                   layout = wibox.layout.fixed.horizontal,
+                   wibox.widget.systray(),
+                   mytextclock,
+                   s.mylayoutbox,
+                }
+             }
+          }
+       }
+    end
 end
 
 -- }}}
@@ -372,10 +407,14 @@ globalkeys = gears.table.join(
     ),
 
     -- Layout manipulation
-    awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
-              {description = "swap with next client by index", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end,
-              {description = "swap with previous client by index", group = "client"}),
+    awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.bydirection("down")    end,
+              {description = "swap with lower client", group = "client"}),
+    awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.bydirection("up")    end,
+              {description = "swap with upper client", group = "client"}),
+    awful.key({ modkey, "Shift"   }, "h", function () awful.client.swap.bydirection("left")    end,
+              {description = "swap with left client", group = "client"}),
+    awful.key({ modkey, "Shift"   }, "l", function () awful.client.swap.bydirection("right")    end,
+              {description = "swap with right client", group = "client"}),
 
     -- Screen changing
     awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_bydirection("down") end,
@@ -398,14 +437,19 @@ globalkeys = gears.table.join(
               {description = "quit awesome", group = "awesome"}),
 
     -- Application size on screen
-    awful.key({ modkey,           }, "i",     function () awful.tag.incmwfact( 0.05)          end,
+    awful.key({ modkey,           }, ".",     function () awful.tag.incmwfact( 0.05)          end,
               {description = "increase master width factor", group = "layout"}),
-    awful.key({ modkey,           }, "m",     function () awful.tag.incmwfact(-0.05)          end,
-
+    awful.key({ modkey,           }, ",",     function () awful.tag.incmwfact(-0.05)          end,
               {description = "decrease master width factor", group = "layout"}),
-    awful.key({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster( 1, nil, true) end,
+
+    awful.key({ modkey,           }, "i",     function () awful.client.incwfact( 0.1)          end,
+              {description = "increase master width factor", group = "layout"}),
+    awful.key({ modkey,           }, "m",     function () awful.client.incwfact(-0.1)          end,
+              {description = "decrease master width factor", group = "layout"}),
+
+    awful.key({ modkey, "Shift"   }, ",",     function () awful.tag.incnmaster( 1, nil, true) end,
               {description = "increase the number of master clients", group = "layout"}),
-    awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1, nil, true) end,
+    awful.key({ modkey, "Shift"   }, ".",     function () awful.tag.incnmaster(-1, nil, true) end,
               {description = "decrease the number of master clients", group = "layout"}),
 
     awful.key({ modkey,           }, "Tab", function () awful.layout.inc( 1)                end,
@@ -435,14 +479,28 @@ globalkeys = gears.table.join(
     -- Custom keybindings
     awful.key({modkey, "Shift"}, "m",
        function ()
-          awful.spawn("firefox --new-window https://open.spotify.com")
+          awful.spawn("spotify")
        end,
        {decription = "Run spotify", group = "applications"}
     ),
 
+    -- awful.key({modkey}, "q", "a"
+    --    function ()
+    --       awful.spawn("alacritty")
+    --    end,
+    --    {decription = "Run spotify", group = "applications"}
+    -- ),
+
     awful.key({modkey}, "e",
        function ()
           awful.spawn("emacsclient -c --eval '(load-file \"~/.emacs.d/init.el\")'")
+       end,
+       {decription = "Run emacs daemon", group = "applications"}
+    ),
+
+    awful.key({modkey, "Shift"}, "e",
+       function ()
+          awful.spawn("emacs")
        end,
        {decription = "Run emacs", group = "applications"}
     ),
@@ -478,7 +536,7 @@ clientkeys = gears.table.join(
             c:raise()
         end,
         {description = "toggle fullscreen", group = "client"}),
-    awful.key({ modkey}, "w",      function (c) c:kill()                         end,
+    awful.key({ modkey, "Shift"}, "c",      function (c) c:kill()                         end,
               {description = "close", group = "client"}),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ,
               {description = "toggle floating", group = "client"}),
