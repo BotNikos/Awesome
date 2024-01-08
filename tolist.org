@@ -1,8 +1,0 @@
-* Todos 
-** Wibar [1/2]
-- [X] Wibar on second screen 
-- [ ] Updates widget click and tooltip
-- [ ] CPU widget
-** Layouts [/]
-- [ ] MonadTall layout from qtile 
-
