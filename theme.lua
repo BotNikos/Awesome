@@ -11,7 +11,7 @@ local themes_path = gfs.get_themes_dir()
 
 local theme = {}
 
-theme.font          = "mononoki Bold 16"
+theme.font = "Fira Code Bold 14"
 
 background = "#282A36"
 background2 = "#383A59"
@@ -64,6 +64,10 @@ theme.taglist_fg_focus = foreground
 -- notification_[bg|fg]
 -- notification_[width|height|margin]
 -- notification_[border_color|border_width|shape|opacity]
+
+theme.notification_width = dpi(600) 
+theme.notification_height = dpi(100) 
+theme.notification_icon_size = dpi(100) 
 
 -- Variables set for theming the menu:
 -- menu_[bg|fg]_[normal|focus]
