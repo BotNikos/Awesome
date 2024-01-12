@@ -10,9 +10,9 @@ require("awful.hotkeys_popup.keys")
 
 keyboardLayout = 'ru'
 
+
 local popups = require "widgets/popups"
 local keys = gears.table.join (
-
 
    awful.key({modkey}, "i",
       function ()
@@ -120,11 +120,12 @@ local keys = gears.table.join (
 
           gears.timer {
              timeout = 1,
+             autostart = true,
              single_shot = true,
              callback = function ()
                 popups.langLay.visible = false 
              end
-          }:start()
+          }
 
           keyboardLayout = keyboardLayout == 'us' and 'ru' or 'us'
 
@@ -139,8 +140,9 @@ local keys = gears.table.join (
     awful.key({ modkey, }, "p", function () awful.spawn("playerctl play-pause") end, {description = "Toggle player", group = "multimedia"}),
     awful.key({ modkey, }, "]", function () awful.spawn("playerctl next") end, {description = "Next player", group = "multimedia"}),
     awful.key({ modkey, }, "[", function () awful.spawn("playerctl previous") end, {description = "Back player", group = "multimedia"}),
-    awful.key({ modkey, }, "=", function () awful.spawn("pamixer -i 10") end, {description = "Increase volume by 10", group = "multimedia"}),
-    awful.key({ modkey, }, "-", function () awful.spawn("pamixer -d 10") end, {description = "Decrease volume by 10", group = "multimedia"})
+
+    awful.key({ modkey, }, "=", function () popups.volumeChange("increase") end, {description = "Increase volume by 10", group = "multimedia"}),
+    awful.key({ modkey, }, "-", function () popups.volumeChange("decrease") end, {description = "Decrease volume by 10", group = "multimedia"})
 )
 
 local clientkeys = gears.table.join(

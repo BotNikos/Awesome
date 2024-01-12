@@ -65,9 +65,9 @@ theme.taglist_fg_focus = foreground
 -- notification_[width|height|margin]
 -- notification_[border_color|border_width|shape|opacity]
 
-theme.notification_width = dpi(600) 
-theme.notification_height = dpi(100) 
-theme.notification_icon_size = dpi(100) 
+-- theme.notification_width = dpi(600) 
+-- theme.notification_height = dpi(100) 
+-- theme.notification_icon_size = dpi(100) 
 
 -- Variables set for theming the menu:
 -- menu_[bg|fg]_[normal|focus]
