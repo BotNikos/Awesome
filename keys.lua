@@ -8,9 +8,6 @@ local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
 require("awful.hotkeys_popup.keys")
 
-keyboardLayout = 'ru'
-
-
 local popups = require "widgets/popups"
 local keys = gears.table.join (
 
@@ -86,7 +83,7 @@ local keys = gears.table.join (
               {description = "select next", group = "layout"}),
 
     -- Launcher
-    awful.key({modkey}, "r", function () awful.spawn("rofi -show run") end, {description = "Run rofi", group = "launcher"}),
+    awful.key({modkey}, "r", function () awful.spawn("rofi -show drun") end, {description = "Run rofi", group = "launcher"}),
 
     -- Custom keybindings
     awful.key({modkey, "Shift"}, "m",
@@ -111,26 +108,7 @@ local keys = gears.table.join (
     ),
 
     -- change keyboard layout
-    awful.key({modkey}, "space",
-       function ()
-          awful.spawn('setxkbmap '..keyboardLayout)
-          popups.langLay.screen = awful.screen.focused() 
-          popups.langLay.widget.widget.text = string.upper(keyboardLayout)
-          popups.langLay.visible = true
-
-          gears.timer {
-             timeout = 1,
-             autostart = true,
-             single_shot = true,
-             callback = function ()
-                popups.langLay.visible = false 
-             end
-          }
-
-          keyboardLayout = keyboardLayout == 'us' and 'ru' or 'us'
-
-       end,
-       {description = "Change layout", group = "applications"}
+    awful.key({modkey}, "space", function () popups.langChange() end, {description = "Change layout", group = "applications"}
     ),
 
     -- pavucontrol

@@ -7,9 +7,6 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 local beautiful = require ("beautiful")
 require("awful.hotkeys_popup.keys")
 
--- icons
-local icons = require "../icons/iconsInit"
-
 -- colors
 background = "#282A36"
 background2 = "#383A59"
@@ -45,6 +42,12 @@ systemInfo = awful.popup {
    border_color = violet,
 }
 
+local keyboardlayout = 'ru'
+local langTimer = gears.timer {
+   timeout = 2,
+   single_shot = true,
+}
+
 langLay = awful.popup {
    widget = {
       {
@@ -67,11 +70,18 @@ langLay = awful.popup {
    ontop = true
 }
 
+function langChange ()
+   keyboardlayout = keyboardlayout == "ru" and "us" or "ru"
+   langLay.widget.widget.text = string.upper(keyboardlayout)
+   langLay.visible = true
+   langTimer:connect_signal('timeout', function () langLay.visible = false end)
+   langTimer:again()
+end
+
 local volumeTimer = gears.timer {
    timeout = 2,
    single_shot = true,
 }
-
 
 local volumeMeter = awful.popup {
 
@@ -97,8 +107,6 @@ local volumeMeter = awful.popup {
       layout = wibox.layout.stack
    },
 
-   
-   -- placement = awful.placement.bottom,
    x = 0,
    y = 0,
    screen = screen[1],
@@ -118,11 +126,6 @@ function volumeChange (action)
                                          volumeMeter : setup {
 
                                             {
-                                               image = icons.volume,
-                                               widget = wibox.widget.imagebox 
-                                            },
-
-                                            {
                                                max_value = 10,
                                                value = volumeLevel,
                                                paddings = 5,
@@ -137,13 +140,29 @@ function volumeChange (action)
 
                                             {
                                                font = "Fira Code Bold 25",
-                                               text = "Vol: ".. tostring (volumeLevel) .. "/10",
-                                               forced_width = 500,
+                                               text = tostring (volumeLevel) .. "/10",
                                                align = "center",
                                                valign = "center",
+                                               halign = "center",
                                                widget = wibox.widget.textbox
                                             },
 
+                                            {
+                                               {
+                                                  resize = false,
+                                                  align = "center",
+                                                  valign = "center",
+                                                  halign = "center",
+                                                  image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_24px/volume.svg",
+                                                  widget = wibox.widget.imagebox 
+                                               },
+
+                                               left = 180,
+                                               top = 12,
+                                               widget = wibox.container.margin,
+                                            },
+
+                                            forced_width = 500,
                                             layout = wibox.layout.stack
                                                              }
 
@@ -163,7 +182,6 @@ end
 
 return {
    systemInfo = systemInfo,
-   langLay = langLay,
-   volumeMeter = volumeMeter,
+   langChange = langChange,
    volumeChange = volumeChange
 } 
