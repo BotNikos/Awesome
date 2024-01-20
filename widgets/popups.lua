@@ -153,12 +153,12 @@ function volumeChange (action)
                                                   align = "center",
                                                   valign = "center",
                                                   halign = "center",
-                                                  image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_24px/volume.svg",
+                                                  image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/volume.svg",
                                                   widget = wibox.widget.imagebox 
                                                },
 
-                                               left = 180,
-                                               top = 12,
+                                               left = 170,
+                                               top = 1,
                                                widget = wibox.container.margin,
                                             },
 
