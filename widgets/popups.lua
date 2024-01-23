@@ -7,27 +7,13 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 local beautiful = require ("beautiful")
 require("awful.hotkeys_popup.keys")
 
--- colors
-background = "#282A36"
-background2 = "#383A59"
-foreground = "#F4F4EF"
-violet = "#BD93F9"
-orange = "#FF9C32"
-majenta = "#FF79C6"
-blue = "#7CCCDF"
+local colors = require "colors"
+local player = require "widgets/player"
 
 systemInfo = awful.popup {
    widget = {
       {
-         {
-            -- image = "~/.config/awesome/icons/featherIcons/volume.svg",
-            resize = true,
-            upscale = true,
-            forced_width = 50,
-            forced_height = 50,
-            image = "~/pokemons/mew.png",
-            widget = wibox.widget.imagebox
-         },
+         player,
          layout = wibox.layout.fixed.vertical
       },
       margins = 10,
@@ -39,10 +25,10 @@ systemInfo = awful.popup {
 
    visible = false,
    ontop = true,
-   border_color = violet,
+   border_color = colors.violet,
 }
 
-local keyboardlayout = 'ru'
+local keyboardlayout = 'us'
 local langTimer = gears.timer {
    timeout = 2,
    single_shot = true,
@@ -63,7 +49,7 @@ langLay = awful.popup {
 
    hide_on_right_click = true,
    border_width = 2,
-   border_color = violet,
+   border_color = colors.violet,
    screen = screen[1],
    placement = awful.placement.centered,
    visible = false,
@@ -72,6 +58,7 @@ langLay = awful.popup {
 
 function langChange ()
    keyboardlayout = keyboardlayout == "ru" and "us" or "ru"
+   awful.spawn("setxkbmap " .. keyboardlayout)
    langLay.widget.widget.text = string.upper(keyboardlayout)
    langLay.visible = true
    langTimer:connect_signal('timeout', function () langLay.visible = false end)
@@ -93,9 +80,9 @@ local volumeMeter = awful.popup {
          paddings = 5,
          forced_width = 500,
          forced_height = 50,
-         border_color = violet,
-         color = violet,
-         background_color = background,
+         border_color = colors.violet,
+         color = colors.violet,
+         background_color = colors.background,
          border_width = 2,
          widget = wibox.widget.progressbar,
       },
@@ -131,9 +118,9 @@ function volumeChange (action)
                                                paddings = 5,
                                                forced_width = 500,
                                                forced_height = 50,
-                                               border_color = violet,
-                                               color = violet,
-                                               background_color = background,
+                                               border_color = colors.violet,
+                                               color = colors.violet,
+                                               background_color = colors.background,
                                                border_width = 2,
                                                widget = wibox.widget.progressbar
                                             },
