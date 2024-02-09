@@ -13,22 +13,17 @@ local playerIcon = wibox.widget {
 }
 
 local playerTitle = wibox.widget {
-   font = "Fira Code Bold 24",
+   font = "Mononoki Nerd Font Bold 24",
    text = "Here need to be song title",
    forced_height = 35,
    widget = wibox.widget.textbox
 }
 
 local playerAuthor = wibox.widget {
-   font = "Fira Code Bold 14",
+   font = "Mononoki Nerd Font 14",
    text = "Here need to be song author",
    widget = wibox.widget.textbox
 }
-
--- TODO:
--- Объеденить прогрессбар и время в один виджет
--- который позволит настроить процентноее соотнешение
--- размеров для каждого wibox.layout.ratio.horizontal
 
 local playerProgress = wibox.widget {
    value = 25,
@@ -45,11 +40,23 @@ local playerProgress = wibox.widget {
 }
 
 local playerTime = wibox.widget {
-   font = "Fira Code Bold 14",
+   font = "Mononoki Nerd Font 14",
    text = "0:00/0:00",
-   forced_width = 100,
    widget = wibox.widget.textbox
 }
+
+local progressContainer = wibox.widget {
+   {
+      playerProgress,
+      right = 10,
+      widget = wibox.container.margin
+   },
+   playerTime,
+   forced_width = 430,
+   layout = wibox.layout.ratio.horizontal
+}
+progressContainer:set_ratio(1, 0.75)
+progressContainer:set_ratio(2, 0.25)
 
 local player = wibox.widget {
    {
@@ -58,13 +65,7 @@ local player = wibox.widget {
          {
             playerTitle,
             playerAuthor,
-
-            {
-                playerProgress,
-                playerTime,
-                layout = wibox.layout.align.horizontal
-            },
-
+            progressContainer,
             layout = wibox.layout.fixed.vertical
          },
          spacing = 15,
@@ -82,23 +83,36 @@ local player = wibox.widget {
 
 local lastMetadataName = ""
 function checkPlayer ()
-   awful.spawn.easy_async_with_shell ('playerctl metadata --format "{{title}}|{{artist}}|{{mpris:length}}|{{mpris:artUrl}}"', function (out)
+   awful.spawn.easy_async_with_shell ('playerctl metadata --format "{{title}}|{{artist}}|{{duration(mpris:length)}}|{{mpris:artUrl}}"', function (out)
+                                         local songInfo = gears.string.split(out, "|")
+
                                          if out ~= lastMetadataName then
                                             lastMetadataName = out
-                                            local songInfo = gears.string.split(out, "|")
                                             awful.spawn.easy_async_with_shell ('curl -o ~/.config/awesome/tmp/playerIcon.png ' .. tostring(songInfo[4]), function ()
-                                                                                  playerIcon.image = gears.surface.load_uncached ("/home/bot_nikos/.config/awesome/tmp/playerIcon.png")
+                                                                                  local songLengthSplited = gears.string.split(songInfo[3], ":")
+                                                                                  local songLengthSeconds = tonumber(songLengthSplited[1]) * 60 + tonumber(songLengthSplited[2]) -- 60 seconds in minute
+
+                                                                                  playerIcon.image = gears.surface.load_uncached (os.getenv ("HOME") .. "/.config/awesome/tmp/playerIcon.png")
                                                                                   playerTitle.text = songInfo[1]
                                                                                   playerAuthor.text = songInfo[2]
-                                                                                  playerProgress.maximum = tonumber(songInfo[3])
+                                                                                  playerProgress.maximum = songLengthSeconds
+                                                                                  playerTime.text = "0:00/" .. songInfo[3]
+                                            end)
+                                         else
+                                            awful.spawn.easy_async_with_shell ('playerctl position --format "{{duration(position)}}|"', function (out)
+                                                                                  local songTime = gears.string.split (out, "|")
+                                                                                  local songTimeSplited = gears.string.split(songTime[1], ":")
+                                                                                  local songTimeSeconds = tonumber(songTimeSplited[1]) * 60 + tonumber(songTimeSplited[2]) -- 60 - seconds in minute
 
+                                                                                  playerTime.text = songTime[1] .. "/" .. songInfo[3]
+                                                                                  playerProgress.value = songTimeSeconds
                                             end)
                                          end
    end)
 end
 
-local testTimer = gears.timer {timeout = 1}
-testTimer:connect_signal('timeout', checkPlayer)
-testTimer:start()
+local playerCheckTimer = gears.timer {timeout = 1}
+playerCheckTimer:connect_signal('timeout', checkPlayer)
+playerCheckTimer:start()
 
 return player

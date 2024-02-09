@@ -85,7 +85,7 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 mytextclock = wibox.widget.textclock()
 mytextclock.format = " %I:%M:%S %p "
 mytextclock.refresh = 1
-mytextclock.timezone = "+00:00"
+mytextclock.timezone = "+03:00"
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -451,5 +451,12 @@ client.connect_signal("focus", function(c) c.border_color = beautiful.border_foc
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
+client.connect_signal("property::minimized", function(c)
+     c.minimized = false
+ end)
+ client.connect_signal("property::maximized", function(c)
+     c.maximized = false
+ end)
+
 -- autostart
-awful.spawn("/home/bot_nikos/.config/awesome/autostart.sh")
+awful.spawn("/home/botnikos/.config/awesome/autostart.sh")

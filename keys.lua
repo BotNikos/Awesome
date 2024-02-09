@@ -127,7 +127,8 @@ local clientkeys = gears.table.join(
     awful.key({modkey}, "f", function (c) c.fullscreen = not c.fullscreen c:raise() end, {description = "toggle fullscreen", group = "client"}),
     awful.key({modkey, "Shift"}, "f", function (c) c.floating = not c.floating end, {description = "toggle floating", group = "client"}),
     awful.key({modkey, "Shift"}, "c", function (c) c:kill() end, {description = "close", group = "client"}),
-    awful.key({modkey}, "t", function (c) c.ontop = not c.ontop end, {description = "toggle keep on top", group = "client"})
+    awful.key({modkey}, "t", function (c) c.ontop = not c.ontop end, {description = "toggle keep on top", group = "client"}),
+    awful.key({ modkey, "Shift" }, "m", function (c) c.maximized = false c.maximized_vertical=false c.maximized_horizontal=false c:raise() end, {description = "demaximize", group = "client"})
 )
 
 return {
