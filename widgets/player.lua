@@ -25,6 +25,10 @@ local playerAuthor = wibox.widget {
    widget = wibox.widget.textbox
 }
 
+-- TODO: Change slider widget to progressbar widget
+-- make seeking on button::release signal
+-- progressbar:connect_signal("button::release", fuction () ... end)
+
 local playerProgress = wibox.widget {
    value = 25,
    minimum = 0,
@@ -38,6 +42,13 @@ local playerProgress = wibox.widget {
    forced_height = 35,
    widget = wibox.widget.slider
 }
+
+local currentTime = 0
+playerProgress:connect_signal("property::value", function (_, newTime)
+                                 if newTime ~= currentTime then
+                                    awful.spawn.easy_async_with_shell ("playerctl position " .. tostring (newTime), function () end)
+                                 end
+end)
 
 local playerTime = wibox.widget {
    font = "Mononoki Nerd Font 14",
@@ -101,6 +112,8 @@ function changePlayer (out)
                                             playerAuthor.text = songInfo[2]
                                             playerProgress.maximum = songLengthSeconds
                                             playerTime.text = "0:00/" .. songInfo[3]
+                                            playerProgress.value = 0
+                                            currentTime = 0
       end)
    else
       awful.spawn.easy_async_with_shell ('playerctl position --format "{{duration(position)}}|"', function (out)
@@ -108,6 +121,7 @@ function changePlayer (out)
                                             local songTimeSeconds = timeToSec (songTime[1])
 
                                             playerTime.text = songTime[1] .. "/" .. songInfo[3]
+                                            currentTime = songTimeSeconds
                                             playerProgress.value = songTimeSeconds
       end)
    end
