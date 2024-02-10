@@ -127,19 +127,13 @@ function changePlayer (out)
    end
 end
 
-local playerStatus = "disabled"
 function checkPlayer ()
 
    awful.spawn.easy_async_with_shell ("playerctl status", function (out)
-                                         if out ~= "No players found" then
-                                            playerStatus = "enabled"
+                                         if out ~= "" then
+                                            awful.spawn.easy_async_with_shell ('playerctl metadata --format "{{title}}|{{artist}}|{{duration(mpris:length)}}|{{mpris:artUrl}}"', changePlayer)
                                          end
    end)
-
-   if playerStatus == "enabled" then
-      awful.spawn.easy_async_with_shell ('playerctl metadata --format "{{title}}|{{artist}}|{{duration(mpris:length)}}|{{mpris:artUrl}}"', changePlayer)
-   end
-
 end
 
 local playerCheckTimer = gears.timer {timeout = 1}
