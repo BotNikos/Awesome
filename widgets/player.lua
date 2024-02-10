@@ -81,34 +81,51 @@ local player = wibox.widget {
    widget = wibox.container.background
 }
 
-local lastMetadataName = ""
+function timeToSec (time)
+   local timeSplited = gears.string.split(time, ":")
+   return tonumber(timeSplited[1]) * 60 + tonumber(timeSplited[2]) -- 60 seconds in minute
+end
+
+local lastMetadata = ""
+function changePlayer (out)
+
+   local songInfo = gears.string.split(out, "|")
+
+   if out ~= lastMetadata then
+      lastMetadata = out
+      awful.spawn.easy_async_with_shell ('curl -o ~/.config/awesome/tmp/playerIcon.png ' .. tostring(songInfo[4]), function ()
+                                            local songLengthSeconds = timeToSec (songInfo[3])
+
+                                            playerIcon.image = gears.surface.load_uncached (os.getenv ("HOME") .. "/.config/awesome/tmp/playerIcon.png")
+                                            playerTitle.text = songInfo[1]
+                                            playerAuthor.text = songInfo[2]
+                                            playerProgress.maximum = songLengthSeconds
+                                            playerTime.text = "0:00/" .. songInfo[3]
+      end)
+   else
+      awful.spawn.easy_async_with_shell ('playerctl position --format "{{duration(position)}}|"', function (out)
+                                            local songTime = gears.string.split (out, "|")
+                                            local songTimeSeconds = timeToSec (songTime[1])
+
+                                            playerTime.text = songTime[1] .. "/" .. songInfo[3]
+                                            playerProgress.value = songTimeSeconds
+      end)
+   end
+end
+
+local playerStatus = "disabled"
 function checkPlayer ()
-   awful.spawn.easy_async_with_shell ('playerctl metadata --format "{{title}}|{{artist}}|{{duration(mpris:length)}}|{{mpris:artUrl}}"', function (out)
-                                         local songInfo = gears.string.split(out, "|")
 
-                                         if out ~= lastMetadataName then
-                                            lastMetadataName = out
-                                            awful.spawn.easy_async_with_shell ('curl -o ~/.config/awesome/tmp/playerIcon.png ' .. tostring(songInfo[4]), function ()
-                                                                                  local songLengthSplited = gears.string.split(songInfo[3], ":")
-                                                                                  local songLengthSeconds = tonumber(songLengthSplited[1]) * 60 + tonumber(songLengthSplited[2]) -- 60 seconds in minute
-
-                                                                                  playerIcon.image = gears.surface.load_uncached (os.getenv ("HOME") .. "/.config/awesome/tmp/playerIcon.png")
-                                                                                  playerTitle.text = songInfo[1]
-                                                                                  playerAuthor.text = songInfo[2]
-                                                                                  playerProgress.maximum = songLengthSeconds
-                                                                                  playerTime.text = "0:00/" .. songInfo[3]
-                                            end)
-                                         else
-                                            awful.spawn.easy_async_with_shell ('playerctl position --format "{{duration(position)}}|"', function (out)
-                                                                                  local songTime = gears.string.split (out, "|")
-                                                                                  local songTimeSplited = gears.string.split(songTime[1], ":")
-                                                                                  local songTimeSeconds = tonumber(songTimeSplited[1]) * 60 + tonumber(songTimeSplited[2]) -- 60 - seconds in minute
-
-                                                                                  playerTime.text = songTime[1] .. "/" .. songInfo[3]
-                                                                                  playerProgress.value = songTimeSeconds
-                                            end)
+   awful.spawn.easy_async_with_shell ("playerctl status", function (out)
+                                         if out ~= "No players found" then
+                                            playerStatus = "enabled"
                                          end
    end)
+
+   if playerStatus == "enabled" then
+      awful.spawn.easy_async_with_shell ('playerctl metadata --format "{{title}}|{{artist}}|{{duration(mpris:length)}}|{{mpris:artUrl}}"', changePlayer)
+   end
+
 end
 
 local playerCheckTimer = gears.timer {timeout = 1}
