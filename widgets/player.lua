@@ -15,7 +15,7 @@ local playerIcon = wibox.widget {
 local playerTitle = wibox.widget {
    font = "Mononoki Nerd Font Bold 24",
    text = "Here need to be song title",
-   forced_height = 35,
+   forced_height = 40,
    widget = wibox.widget.textbox
 }
 
@@ -25,30 +25,28 @@ local playerAuthor = wibox.widget {
    widget = wibox.widget.textbox
 }
 
--- TODO: Change slider widget to progressbar widget
--- make seeking on button::release signal
--- progressbar:connect_signal("button::release", fuction () ... end)
-
 local playerProgress = wibox.widget {
    value = 25,
-   minimum = 0,
-   maximum = 100,
-   handle_shape = gears.shape.circle,
-   handle_color = colors.violet,
-   bar_shape = gears.shape.rect,
-   bar_active_color = colors.violet,
-   bar_color = colors.foreground,
-   bar_height = 3,
+   max_value = 100,
+   color = colors.violet,
+   background_color = colors.foreground,
    forced_height = 35,
-   widget = wibox.widget.slider
+   margins = {
+      top = 15,
+      bottom = 15
+   },
+
+   widget = wibox.widget.progressbar,
+   
 }
 
-local currentTime = 0
-playerProgress:connect_signal("property::value", function (_, newTime)
-                                 if newTime ~= currentTime then
-                                    awful.spawn.easy_async_with_shell ("playerctl position " .. tostring (newTime), function () end)
-                                 end
-end)
+-- TODO: Commented code below works but 
+-- its seek track not correct
+
+-- playerProgress:connect_signal("button::release", function (something, newTime)
+--                                  awful.spawn.easy_async_with_shell ("playerctl position " .. tostring (newTime), function () end)
+--                                  naughty.notify {message = "New Time" .. tostring(something)}
+-- end)
 
 local playerTime = wibox.widget {
    font = "Mononoki Nerd Font 14",
@@ -69,6 +67,45 @@ local progressContainer = wibox.widget {
 progressContainer:set_ratio(1, 0.75)
 progressContainer:set_ratio(2, 0.25)
 
+-- TODO: Hover effects on mouse enter signal
+-- every button need to have its own widget
+-- buttonWidget:connect_signal("mouse::enter", function () ...changeColor... end)
+
+local buttonSize = 40
+local buttonsContainer = wibox.widget {
+   {
+      image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/skip-back.svg",
+      forced_width = buttonSize,
+      forced_height = buttonSize,
+      buttons = {
+         awful.button ({}, 1, nil, function () awful.spawn ("playerctl previous") end)
+      },
+      widget = wibox.widget.imagebox 
+   },
+
+   {
+      image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/pause.svg",
+      forced_width = buttonSize,
+      forced_height = buttonSize,
+      buttons = {
+         awful.button ({}, 1, nil, function () awful.spawn ("playerctl play-pause") end)
+      },
+      widget = wibox.widget.imagebox 
+   },
+
+   {
+      image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/skip-forward.svg",
+      forced_width = buttonSize,
+      forced_height = buttonSize,
+      buttons = {
+         awful.button ({}, 1, nil, function () awful.spawn ("playerctl next") end)
+      },
+      widget = wibox.widget.imagebox 
+   },
+
+   layout = wibox.layout.fixed.horizontal
+}
+
 local player = wibox.widget {
    {
       {
@@ -77,6 +114,7 @@ local player = wibox.widget {
             playerTitle,
             playerAuthor,
             progressContainer,
+            buttonsContainer,
             layout = wibox.layout.fixed.vertical
          },
          spacing = 15,
@@ -110,10 +148,9 @@ function changePlayer (out)
                                             playerIcon.image = gears.surface.load_uncached (os.getenv ("HOME") .. "/.config/awesome/tmp/playerIcon.png")
                                             playerTitle.text = songInfo[1]
                                             playerAuthor.text = songInfo[2]
-                                            playerProgress.maximum = songLengthSeconds
+                                            playerProgress.max_value = songLengthSeconds
                                             playerTime.text = "0:00/" .. songInfo[3]
                                             playerProgress.value = 0
-                                            currentTime = 0
       end)
    else
       awful.spawn.easy_async_with_shell ('playerctl position --format "{{duration(position)}}|"', function (out)
@@ -121,7 +158,6 @@ function changePlayer (out)
                                             local songTimeSeconds = timeToSec (songTime[1])
 
                                             playerTime.text = songTime[1] .. "/" .. songInfo[3]
-                                            currentTime = songTimeSeconds
                                             playerProgress.value = songTimeSeconds
       end)
    end
