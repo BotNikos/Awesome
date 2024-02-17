@@ -10,6 +10,14 @@ require("awful.hotkeys_popup.keys")
 local colors = require "colors"
 local player = require "widgets/player"
 
+local systemInfoCloseTimer = gears.timer {
+   timeout = 1,
+   single_shot = true,
+   callback = function ()
+      systemInfo.visible = false
+   end
+}
+
 systemInfo = awful.popup {
    widget = {
       {
@@ -27,6 +35,9 @@ systemInfo = awful.popup {
    ontop = true,
    border_color = colors.violet,
 }
+
+systemInfo:connect_signal("mouse::leave", function () systemInfoCloseTimer:again() end)
+systemInfo:connect_signal("mouse::enter", function () systemInfoCloseTimer:stop() end)
 
 local keyboardlayout = 'us'
 local langTimer = gears.timer {

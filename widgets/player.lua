@@ -40,13 +40,7 @@ local playerProgress = wibox.widget {
    
 }
 
--- TODO: Commented code below works but 
--- its seek track not correct
-
--- playerProgress:connect_signal("button::release", function (something, newTime)
---                                  awful.spawn.easy_async_with_shell ("playerctl position " .. tostring (newTime), function () end)
---                                  naughty.notify {message = "New Time" .. tostring(something)}
--- end)
+-- TODO: Add fuction to seek track
 
 local playerTime = wibox.widget {
    font = "Mononoki Nerd Font 14",
@@ -67,43 +61,58 @@ local progressContainer = wibox.widget {
 progressContainer:set_ratio(1, 0.75)
 progressContainer:set_ratio(2, 0.25)
 
--- TODO: Hover effects on mouse enter signal
--- every button need to have its own widget
--- buttonWidget:connect_signal("mouse::enter", function () ...changeColor... end)
-
 local buttonSize = 40
+local skipBackViolet = '<svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="' .. colors.violet .. '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-skip-back "><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>'
+local pauseViolet = '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="' .. colors.violet .. '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-pause"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>'
+local skipNextVoliet = '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="' .. colors.violet .. '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-skip-forward"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>' 
+
+local buttonPrevious = wibox.widget {
+   image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/skip-back.svg",
+   forced_width = buttonSize,
+   forced_height = buttonSize,
+   halign = 'center',
+   buttons = {
+      awful.button ({}, 1, nil, function () awful.spawn ("playerctl previous") end)
+   },
+   widget = wibox.widget.imagebox 
+}
+
+buttonPrevious:connect_signal("mouse::enter", function () buttonPrevious.image = skipBackViolet end)
+buttonPrevious:connect_signal("mouse::leave", function () buttonPrevious.image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/skip-back.svg" end)
+
+local buttonTogglePause = wibox.widget {
+   image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/pause.svg",
+   forced_width = buttonSize,
+   forced_height = buttonSize,
+   halign = 'center',
+   buttons = {
+      awful.button ({}, 1, nil, function () awful.spawn ("playerctl play-pause") end)
+   },
+   widget = wibox.widget.imagebox 
+}
+
+buttonTogglePause:connect_signal("mouse::enter", function () buttonTogglePause.image = pauseViolet end)
+buttonTogglePause:connect_signal("mouse::leave", function () buttonTogglePause.image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/pause.svg" end)
+
+local buttonNext = wibox.widget {
+   image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/skip-forward.svg",
+   forced_width = buttonSize,
+   forced_height = buttonSize,
+   halign = 'center',
+   buttons = {
+      awful.button ({}, 1, nil, function () awful.spawn ("playerctl next") end)
+   },
+   widget = wibox.widget.imagebox 
+}
+
+buttonNext:connect_signal("mouse::enter", function () buttonNext.image = skipNextVoliet end)
+buttonNext:connect_signal("mouse::leave", function () buttonNext.image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/skip-forward.svg" end)
+
 local buttonsContainer = wibox.widget {
-   {
-      image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/skip-back.svg",
-      forced_width = buttonSize,
-      forced_height = buttonSize,
-      buttons = {
-         awful.button ({}, 1, nil, function () awful.spawn ("playerctl previous") end)
-      },
-      widget = wibox.widget.imagebox 
-   },
-
-   {
-      image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/pause.svg",
-      forced_width = buttonSize,
-      forced_height = buttonSize,
-      buttons = {
-         awful.button ({}, 1, nil, function () awful.spawn ("playerctl play-pause") end)
-      },
-      widget = wibox.widget.imagebox 
-   },
-
-   {
-      image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/skip-forward.svg",
-      forced_width = buttonSize,
-      forced_height = buttonSize,
-      buttons = {
-         awful.button ({}, 1, nil, function () awful.spawn ("playerctl next") end)
-      },
-      widget = wibox.widget.imagebox 
-   },
-
-   layout = wibox.layout.fixed.horizontal
+   buttonPrevious,
+   buttonTogglePause,
+   buttonNext,
+   layout = wibox.layout.flex.horizontal
 }
 
 local player = wibox.widget {
@@ -164,9 +173,9 @@ function changePlayer (out)
 end
 
 function checkPlayer ()
-
    awful.spawn.easy_async_with_shell ("playerctl status", function (out)
-                                         if out ~= "" then
+                                         local playerStatus = gears.string.split(out, "\n")
+                                         if playerStatus[1] ~= "Stopped" and playerStatus[1] ~= "" then
                                             awful.spawn.easy_async_with_shell ('playerctl metadata --format "{{title}}|{{artist}}|{{duration(mpris:length)}}|{{mpris:artUrl}}"', changePlayer)
                                          end
    end)
