@@ -68,7 +68,7 @@ awful.layout.layouts = {
     -- awful.layout.suit.fair.horizontal,
     -- awful.layout.suit.spiral,
     -- awful.layout.suit.spiral.dwindle,
-    awful.layout.suit.max,
+    -- awful.layout.suit.max,
     -- awful.layout.suit.max.fullscreen,
     -- awful.layout.suit.magnifier,
     -- awful.layout.suit.corner.nw,
@@ -259,6 +259,14 @@ for s in screen do
                    },
                    wibox.widget.systray(),
                    mytextclock,
+                   -- TODO: change texbox to icon
+                   {
+                      text = "Sidebar",
+                      buttons = {
+                         awful.button ({}, 1, nil, function () systemInfo.visible = not systemInfo.visible end)
+                      },
+                      widget = wibox.widget.textbox,
+                   },
                    s.mylayoutbox,
                 }
              }
