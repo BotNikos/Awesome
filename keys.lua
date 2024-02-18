@@ -10,7 +10,6 @@ require("awful.hotkeys_popup.keys")
 
 local popups = require "widgets/popups"
 local keys = gears.table.join (
-
    awful.key({modkey}, "i",
       function ()
          local currentScreen = awful.screen.focused()
