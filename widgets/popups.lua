@@ -18,6 +18,7 @@ local systemInfoCloseTimer = gears.timer {
    end
 }
 
+-- TODO: change systemInfo popup to local variable
 systemInfo = awful.popup {
    widget = {
       {
