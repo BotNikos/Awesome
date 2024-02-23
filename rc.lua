@@ -261,11 +261,17 @@ for s in screen do
                    mytextclock,
                    -- TODO: change texbox to icon
                    {
-                      text = "Sidebar",
-                      buttons = {
-                         awful.button ({}, 1, nil, function () systemInfo.visible = not systemInfo.visible end)
+                      {
+                         image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/sidebar.svg",
+                         forced_width = 30,
+                         forced_height = 30,
+                         buttons = {
+                            awful.button ({}, 1, nil, function () systemInfo.visible = not systemInfo.visible end)
+                         },
+                         widget = wibox.widget.imagebox,
                       },
-                      widget = wibox.widget.textbox,
+                      right = 5,
+                      widget = wibox.container.margin
                    },
                    s.mylayoutbox,
                 }
