@@ -9,6 +9,9 @@ require("awful.hotkeys_popup.keys")
 
 local colors = require "colors"
 local player = require "widgets/player"
+local monitorToggler = require "widgets/monitorToggler"
+local powerControl = require "widgets/power"
+
 
 local systemInfoCloseTimer = gears.timer {
    timeout = 1,
@@ -18,43 +21,12 @@ local systemInfoCloseTimer = gears.timer {
    end
 }
 
-local monitorState = 'right-of'
-
--- TODO: change systemInfo popup to local variable
--- TODO: create normal widget for monitor change
 systemInfo = awful.popup {
    widget = {
       {
          player,
-         -- Very bad widget for monitors
-         {
-            {
-               {
-                  {
-                     text = "Toggle monitors",
-                     buttons = {
-                        awful.button ({}, 1, nil, function ()
-                              if monitorState == 'right-of' then
-                                 awful.spawn.with_shell ("fish ~/.config/awesome/monitors.fish mirror HDMI-0 HDMI-2")
-                                 monitorState = 'mirror'
-                              elseif monitorState == 'mirror' then
-                                 awful.spawn.with_shell ("fish ~/.config/awesome/monitors.fish right-of HDMI-0 HDMI-2")
-                                 monitorState = 'right-of'
-                              end
-                        end)
-                     },
-                     widget = wibox.widget.textbox
-                  },
-                  margins = 10,
-                  widget = wibox.container.margin
-               },
-               bg = colors.background2,
-               widget = wibox.container.background
-            },
-            top = 10,
-            widget = wibox.container.margin
-         },
-         -- End of very bad widget
+         monitorToggler,
+         powerControl,
          layout = wibox.layout.fixed.vertical
       },
       margins = 10,
