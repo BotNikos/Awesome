@@ -57,6 +57,7 @@ local progressContainer = wibox.widget {
    forced_width = 430,
    layout = wibox.layout.ratio.horizontal
 }
+
 progressContainer:set_ratio(1, 0.75)
 progressContainer:set_ratio(2, 0.25)
 

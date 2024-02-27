@@ -16,6 +16,7 @@ local togglerText = wibox.widget {
    font = "Mononoki Nerd Font 15",
    text = currentState == "right" and "mirror" or "right",
    halign = "center",
+   valign = "center",
    widget = wibox.widget.textbox
 }
 
@@ -35,6 +36,7 @@ local monitorToggler = wibox.widget {
                forced_width = 30,
                forced_height = 30,
                halign = "center",
+               valing = "center",
                widget = wibox.widget.imagebox
             },
 
@@ -58,6 +60,7 @@ local monitorToggler = wibox.widget {
       widget = wibox.container.background
    },
    top = 10,
+   right = 10,
    widget = wibox.container.margin
 }
 

@@ -49,7 +49,8 @@ end
 -- }}}
 
 beautiful.init("~/.config/awesome/theme.lua")
-terminal = "alacritty"
+-- terminal = "alacritty"
+terminal = "kitty"
 editor = "emacs" 
 editor_cmd = terminal .. " -e " .. editor
 

@@ -11,6 +11,7 @@ local colors = require "colors"
 local player = require "widgets/player"
 local monitorToggler = require "widgets/monitorToggler"
 local powerControl = require "widgets/power"
+local compositorToggler = require "widgets/compositorToggler"
 
 
 local systemInfoCloseTimer = gears.timer {
@@ -21,11 +22,21 @@ local systemInfoCloseTimer = gears.timer {
    end
 }
 
+local togglersContainer = wibox.widget {
+   monitorToggler,
+   compositorToggler,
+
+   layout = wibox.layout.ratio.horizontal
+}
+
+togglersContainer:set_ratio (1, 0.5)
+togglersContainer:set_ratio (2, 0.5)
+
 systemInfo = awful.popup {
    widget = {
       {
          player,
-         monitorToggler,
+         togglersContainer,
          powerControl,
          layout = wibox.layout.fixed.vertical
       },
