@@ -27,24 +27,24 @@ gears.timer {
 
 -- {{{ Error handling
 if awesome.startup_errors then
-    naughty.notify({ preset = naughty.config.presets.critical,
-                     title = "Oops, there were errors during startup!",
-                     text = awesome.startup_errors })
+   naughty.notify({ preset = naughty.config.presets.critical,
+                    title = "Oops, there were errors during startup!",
+                    text = awesome.startup_errors })
 end
 
 -- Handle runtime errors after startup
 do
-    local in_error = false
-    awesome.connect_signal("debug::error", function (err)
-        -- Make sure we don't go into an endless error loop
-        if in_error then return end
-        in_error = true
+   local in_error = false
+   awesome.connect_signal("debug::error", function (err)
+                             -- Make sure we don't go into an endless error loop
+                             if in_error then return end
+                             in_error = true
 
-        naughty.notify({ preset = naughty.config.presets.critical,
-                         title = "Oops, an error happened!",
-                         text = tostring(err) })
-        in_error = false
-    end)
+                             naughty.notify({ preset = naughty.config.presets.critical,
+                                              title = "Oops, an error happened!",
+                                              text = tostring(err) })
+                             in_error = false
+   end)
 end
 -- }}}
 
@@ -59,23 +59,8 @@ altKey = "Mod1"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
-    awful.layout.suit.floating,
-    awful.layout.suit.tile,
-    -- lain.layout.uselesstile,
-    -- awful.layout.suit.tile.left,
-    -- awful.layout.suit.tile.bottom,
-    -- awful.layout.suit.tile.top,
-    -- awful.layout.suit.fair,
-    -- awful.layout.suit.fair.horizontal,
-    -- awful.layout.suit.spiral,
-    -- awful.layout.suit.spiral.dwindle,
-    -- awful.layout.suit.max,
-    -- awful.layout.suit.max.fullscreen,
-    -- awful.layout.suit.magnifier,
-    -- awful.layout.suit.corner.nw,
-    -- awful.layout.suit.corner.ne,
-    -- awful.layout.suit.corner.sw,
-    -- awful.layout.suit.corner.se,
+   awful.layout.suit.floating,
+   awful.layout.suit.tile,
 }
 
 -- Keyboard map indicator and switcher
@@ -90,45 +75,46 @@ mytextclock.timezone = "+03:00"
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
-                    awful.button({ }, 1, function(t) t:view_only() end),
-                    awful.button({ modkey }, 1, function(t)
-                                              if client.focus then
-                                                  client.focus:move_to_tag(t)
-                                              end
-                                          end),
-                    awful.button({ }, 3, awful.tag.viewtoggle),
-                    awful.button({ modkey }, 3, function(t)
-                                              if client.focus then
-                                                  client.focus:toggle_tag(t)
-                                              end
-                                          end),
-                    awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
-                    awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
-                )
+   awful.button({ }, 1, function(t) t:view_only() end),
+   awful.button({ modkey }, 1, function(t)
+         if client.focus then
+            client.focus:move_to_tag(t)
+         end
+   end),
+   awful.button({ }, 3, awful.tag.viewtoggle),
+   awful.button({ modkey }, 3, function(t)
+         if client.focus then
+            client.focus:toggle_tag(t)
+         end
+   end),
+   awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
+   awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
+)
 
 local tasklist_buttons = gears.table.join(
-                     awful.button({ }, 1, function (c)
-                                              if c == client.focus then
-                                                  c.minimized = true
-                                              else
-                                                  c:emit_signal(
-                                                      "request::activate",
-                                                      "tasklist",
-                                                      {raise = true}
-                                                  )
-                                              end
-                                          end),
-                     awful.button({ }, 3, function()
-                                              awful.menu.client_list({ theme = { width = 250 } })
-                                          end),
-                     awful.button({ }, 4, function ()
-                                              awful.client.focus.byidx(1)
-                                          end),
-                     awful.button({ }, 5, function ()
-                                              awful.client.focus.byidx(-1)
-                                          end))
+   awful.button({ }, 1, function (c)
+         if c == client.focus then
+            c.minimized = true
+         else
+            c:emit_signal(
+               "request::activate",
+               "tasklist",
+               {raise = true}
+            )
+         end
+   end),
+   awful.button({ }, 3, function()
+         awful.menu.client_list({ theme = { width = 250 } })
+   end),
+   awful.button({ }, 4, function ()
+         awful.client.focus.byidx(1)
+   end),
+   awful.button({ }, 5, function ()
+         awful.client.focus.byidx(-1)
+end))
 
 -- colors
+local colors = require "colors"
 background = "#282A36"
 background2 = "#383A59"
 foreground = "#F4F4EF"
@@ -139,135 +125,129 @@ blue = "#7CCCDF"
 
 local popups = require "widgets/popups"
 
+
 for s in screen do
-    awful.tag({ "Code", "Music", "Browser", "Terminal"}, s, awful.layout.layouts[2])
 
-    s.mylayoutbox = awful.widget.layoutbox(s)
-    s.mylayoutbox:buttons(gears.table.join(
-                           awful.button({ }, 1, function () awful.layout.inc( 1) end),
-                           awful.button({ }, 3, function () awful.layout.inc(-1) end),
-                           awful.button({ }, 4, function () awful.layout.inc( 1) end),
-                           awful.button({ }, 5, function () awful.layout.inc(-1) end)))
+   awful.tag({ "", "", "", ""}, s, awful.layout.layouts[2])
 
-    -- Create a taglist widget
-    s.mytaglist = awful.widget.taglist {
-       screen  = s,
-       filter  = awful.widget.taglist.filter.all,
-       buttons = taglist_buttons,
-       style = {
-          shape = gears.shape.rectangle,
-       },
-       widget_template = {
-          {
+   s.mylayoutbox = awful.widget.layoutbox(s)
+   s.mylayoutbox:buttons(gears.table.join(
+                            awful.button({ }, 1, function () awful.layout.inc( 1) end),
+                            awful.button({ }, 3, function () awful.layout.inc(-1) end),
+                            awful.button({ }, 4, function () awful.layout.inc( 1) end),
+                            awful.button({ }, 5, function () awful.layout.inc(-1) end)))
+
+   -- Create a taglist widget
+   s.mytaglist = awful.widget.taglist {
+      screen  = s,
+      filter  = awful.widget.taglist.filter.all,
+      buttons = taglist_buttons,
+      style = {
+         shape = gears.shape.rectangle,
+      },
+      widget_template = {
             {
-                {
-                    {
-                    {
-                        id = 'text_role',
-                        widget = wibox.widget.textbox,
-                    },
-                    layout = wibox.layout.fixed.horizontal  
-                    },
-                    widget = wibox.container.margin,
-                    left = 10,
-                    right = 10,
-                },
-                widget = wibox.container.background,
-                bg = background,
+               {
+                  {
+                     widget = wibox.container.margin,
+                     left = 10,
+                     right = 10,
+                  },
+                  id = 'background_role',
+                  widget = wibox.container.background,
+               },
+               bg = colors.background2,
+               widget = wibox.container.background
             },
+            margins = 5,
             widget = wibox.container.margin,
-            bottom = 4,
-          },
-          id = 'background_role',
-          widget = wibox.container.background
-       }
-    }
+      }
+   }
 
-    -- Create a tasklist widget
-    s.mytasklist = awful.widget.tasklist {
-        screen  = s,
-        filter  = awful.widget.tasklist.filter.focused,
-        layout = {
-           spacing_widget = {
-              thickness = 1,
-              color = "#ff0000",
-              widget = wibox.widget.separator,
-           },
-           spacing = 1,
-           layout = wibox.layout.fixed.horizontal,
-        }
-    }
+   -- Create a tasklist widget
+   s.mytasklist = awful.widget.tasklist {
+      screen  = s,
+      filter  = awful.widget.tasklist.filter.focused,
+      layout = {
+         spacing_widget = {
+            thickness = 1,
+            color = "#ff0000",
+            widget = wibox.widget.separator,
+         },
+         spacing = 1,
+         layout = wibox.layout.fixed.horizontal,
+      }
+   }
 
-    s.mywibox = awful.wibar {
-       position = "top",
-       height = 50,
-       screen = s,
-       bg = "#00000000"
-    }
+   s.mywibox = awful.wibar {
+      position = "top",
+      height = 50,
+      screen = s,
+      bg = "#00000000"
+   }
 
-    s.mywibox:setup {
-       widget = wibox.container.margin,
-       margins = 10,
-       {
-          widget = wibox.container.background,
-          bg = background,
-          {
-             layout = wibox.layout.align.horizontal,
-             {
-                layout = wibox.layout.fixed.horizontal,
-                s.mytaglist,
-                { -- empty textbox instead of spacing widget
-                   widget = wibox.widget.textbox,
-                   text = "  "
-                }
-             },
-             s.mytasklist,
-             {
-                layout = wibox.layout.fixed.horizontal,
-                -- Memory
-                {
-                   widget = wibox.container.background,
-                   bg = blue,
-                   fg = background,
-                   {
-                      widget = awful.widget.watch('free -m', 1, function (widget, out)
-                                                     local total = string.match(out, "%d+")
-                                                     local totalCharNum = string.find(out, "%d+")
-                                                     local used = string.match(out, "%d+", totalCharNum + 5)
-                                                     widget:set_text(" Memory: "..used.." MB / "..total.." MB ")
-                      end),
-                   }
-                },
+   s.mywibox:setup {
+      widget = wibox.container.margin,
+      margins = 10,
+      {
+         widget = wibox.container.background,
+         bg = background,
+         {
+            layout = wibox.layout.align.horizontal,
+            {
+               layout = wibox.layout.fixed.horizontal,
+               s.mytaglist,
+               { -- empty textbox instead of spacing widget
+                  widget = wibox.widget.textbox,
+                  text = "  "
+               }
+            },
+            s.mytasklist,
+            {
+               layout = wibox.layout.fixed.horizontal,
+               -- Memory
+               {
+                  widget = wibox.container.background,
+                  bg = blue,
+                  fg = background,
+                  {
+                     widget = awful.widget.watch('free -m', 1, function (widget, out)
+                                                    local total = string.match(out, "%d+")
+                                                    local totalCharNum = string.find(out, "%d+")
+                                                    local used = string.match(out, "%d+", totalCharNum + 5)
+                                                    widget:set_text(" Memory: "..used.." MB / "..total.." MB ")
+                     end),
+                  }
+               },
 
-                {
-                   widget = wibox.container.background,
-                   bg = majenta,
-                   fg = background,
-                   {
-                      widget = mykeyboardlayout
-                   }
-                },
-                wibox.widget.systray(),
-                mytextclock,
-                -- TODO: change texbox to icon
-                {
-                   {
-                      image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/sidebar.svg",
-                      forced_width = 30,
-                      forced_height = 30,
-                      buttons = {
-                         awful.button ({}, 1, nil, popups.systemInfoOpen)
-                      },
-                      widget = wibox.widget.imagebox,
-                   },
-                   right = 5,
-                   widget = wibox.container.margin
-                },
-                s.mylayoutbox,
-             }
-          }
-       }
-    }
+               {
+                  widget = wibox.container.background,
+                  bg = majenta,
+                  fg = background,
+                  {
+                     widget = mykeyboardlayout
+                  }
+               },
+               wibox.widget.systray(),
+               mytextclock,
+               {
+                  {
+                     image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/sidebar.svg",
+                     forced_width = 30,
+                     forced_height = 30,
+                     buttons = {
+                        awful.button ({}, 1, nil, popups.systemInfoOpen)
+                     },
+                     widget = wibox.widget.imagebox,
+                  },
+                  right = 5,
+                  widget = wibox.container.margin
+               },
+               s.mylayoutbox,
+            }
+         }
+      }
+   }
 end
 
 -- }}}

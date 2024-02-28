@@ -202,7 +202,6 @@ function volumeChange (action)
 end
 
 return {
-   -- systemInfo = systemInfo,
    systemInfoOpen = systemInfoOpen,
    langChange = langChange,
    volumeChange = volumeChange
