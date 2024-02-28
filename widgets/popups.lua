@@ -14,13 +14,6 @@ local powerControl = require "widgets/power"
 local compositorToggler = require "widgets/compositorToggler"
 
 
-local systemInfoCloseTimer = gears.timer {
-   timeout = 1,
-   single_shot = true,
-   callback = function ()
-      systemInfo.visible = false
-   end
-}
 
 local togglersContainer = wibox.widget {
    monitorToggler,
@@ -32,7 +25,7 @@ local togglersContainer = wibox.widget {
 togglersContainer:set_ratio (1, 0.5)
 togglersContainer:set_ratio (2, 0.5)
 
-systemInfo = awful.popup {
+local systemInfo = awful.popup {
    widget = {
       {
          player,
@@ -50,6 +43,20 @@ systemInfo = awful.popup {
    visible = false,
    ontop = true,
    border_color = colors.violet,
+}
+
+function systemInfoOpen () 
+   local currentScreen = awful.screen.focused()
+   systemInfo.screen = currentScreen
+   systemInfo.visible = not systemInfo.visible
+end
+
+local systemInfoCloseTimer = gears.timer {
+   timeout = 1,
+   single_shot = true,
+   callback = function ()
+      systemInfo.visible = false
+   end
 }
 
 systemInfo:connect_signal("mouse::leave", function () systemInfoCloseTimer:again() end)
@@ -195,7 +202,8 @@ function volumeChange (action)
 end
 
 return {
-   systemInfo = systemInfo,
+   -- systemInfo = systemInfo,
+   systemInfoOpen = systemInfoOpen,
    langChange = langChange,
    volumeChange = volumeChange
 } 

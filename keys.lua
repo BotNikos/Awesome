@@ -10,19 +10,7 @@ require("awful.hotkeys_popup.keys")
 
 local popups = require "widgets/popups"
 local keys = gears.table.join (
-   awful.key({modkey}, "i",
-      function ()
-         local currentScreen = awful.screen.focused()
-
-         popups.systemInfo.screen = currentScreen
-
-         -- popups.systemInfo.minimum_width = currentScreen.workarea.width / 3
-         -- popups.systemInfo.minimum_height = currentScreen.workarea.height - uselessGap - 15
-         -- popups.systemInfo.widget.widget.widget.text = "Hello world!"
-
-         popups.systemInfo.visible = not popups.systemInfo.visible
-      end,
-      {description="Open system info", group="popups"}),
+   awful.key({modkey}, "i", popups.systemInfoOpen, {description="Open system info", group="popups"}),
 
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help, {description="show help", group="awesome"}),
 
