@@ -13,7 +13,7 @@ local monitorToggler = require "widgets/monitorToggler"
 local powerControl = require "widgets/power"
 local compositorToggler = require "widgets/compositorToggler"
 
-
+local calendar = require "widgets/calendar"
 
 local togglersContainer = wibox.widget {
    monitorToggler,
@@ -93,6 +93,7 @@ langLay = awful.popup {
 function langChange ()
    keyboardlayout = keyboardlayout == "ru" and "us" or "ru"
    awful.spawn("setxkbmap " .. keyboardlayout)
+   langLay.screen = awful.screen.focused()
    langLay.widget.widget.text = string.upper(keyboardlayout)
    langLay.visible = true
    langTimer:connect_signal('timeout', function () langLay.visible = false end)

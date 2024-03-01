@@ -73,6 +73,9 @@ mytextclock.format = " %I:%M:%S %p "
 mytextclock.refresh = 1
 mytextclock.timezone = "+03:00"
 
+local calendar = require "widgets/calendar"
+mytextclock:connect_signal ("button::release", calendar.toggle)
+
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
    awful.button({ }, 1, function(t) t:view_only() end),
@@ -124,8 +127,6 @@ majenta = "#FF79C6"
 blue = "#7CCCDF"
 
 local popups = require "widgets/popups"
-
-
 for s in screen do
 
    awful.tag({ "", "", "", ""}, s, awful.layout.layouts[2])

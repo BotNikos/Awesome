@@ -9,6 +9,8 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 require("awful.hotkeys_popup.keys")
 
 local popups = require "widgets/popups"
+local calendar = require "widgets/calendar"
+
 local keys = gears.table.join (
    awful.key({modkey}, "i", popups.systemInfoOpen, {description="Open system info", group="popups"}),
 
