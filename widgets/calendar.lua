@@ -47,5 +47,6 @@ function toggle ()
 end
 
 return {
+   widget = popup,
    toggle = toggle,
 }

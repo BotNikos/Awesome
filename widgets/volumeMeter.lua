@@ -1,104 +1,6 @@
 local gears = require("gears")
 local awful = require("awful")
 local wibox = require("wibox")
-local naughty = require("naughty")
-local menubar = require("menubar")
-local hotkeys_popup = require("awful.hotkeys_popup")
-local beautiful = require ("beautiful")
-require("awful.hotkeys_popup.keys")
-
-local colors = require "colors"
-local player = require "widgets/player"
-local monitorToggler = require "widgets/monitorToggler"
-local powerControl = require "widgets/power"
-local compositorToggler = require "widgets/compositorToggler"
-
-local calendar = require "widgets/calendar"
-
-local togglersContainer = wibox.widget {
-   monitorToggler,
-   compositorToggler,
-
-   layout = wibox.layout.ratio.horizontal
-}
-
-togglersContainer:set_ratio (1, 0.5)
-togglersContainer:set_ratio (2, 0.5)
-
-local systemInfo = awful.popup {
-   widget = {
-      {
-         player,
-         togglersContainer,
-         powerControl,
-         layout = wibox.layout.fixed.vertical
-      },
-      margins = 10,
-      widget = wibox.container.margin
-   },
-   border_width = 2,
-   screen = screen[1],
-   placement = awful.placement.right,
-
-   visible = false,
-   ontop = true,
-   border_color = colors.violet,
-}
-
-function systemInfoOpen () 
-   local currentScreen = awful.screen.focused()
-   systemInfo.screen = currentScreen
-   systemInfo.visible = not systemInfo.visible
-end
-
-local systemInfoCloseTimer = gears.timer {
-   timeout = 1,
-   single_shot = true,
-   callback = function ()
-      systemInfo.visible = false
-   end
-}
-
-systemInfo:connect_signal("mouse::leave", function () systemInfoCloseTimer:again() end)
-systemInfo:connect_signal("mouse::enter", function () systemInfoCloseTimer:stop() end)
-
-local keyboardlayout = 'us'
-local langTimer = gears.timer {
-   timeout = 2,
-   single_shot = true,
-}
-
-langLay = awful.popup {
-   widget = {
-      {
-         font = "Fira Code Bold 50",
-         widget = wibox.widget.textbox
-      },
-      top = 10,
-      bottom = 10,
-      right = 30,
-      left = 30,
-      widget = wibox.container.margin 
-   },
-
-   hide_on_right_click = true,
-   border_width = 2,
-   border_color = colors.violet,
-   screen = screen[1],
-   placement = awful.placement.centered,
-   visible = false,
-   ontop = true
-}
-
-function langChange ()
-   keyboardlayout = keyboardlayout == "ru" and "us" or "ru"
-   awful.spawn("setxkbmap " .. keyboardlayout)
-   langLay.screen = awful.screen.focused()
-   langLay.widget.widget.text = string.upper(keyboardlayout)
-   langLay.visible = true
-   langTimer:connect_signal('timeout', function () langLay.visible = false end)
-   langTimer:again()
-end
 
 local volumeTimer = gears.timer {
    timeout = 2,
@@ -203,7 +105,5 @@ function volumeChange (action)
 end
 
 return {
-   systemInfoOpen = systemInfoOpen,
-   langChange = langChange,
-   volumeChange = volumeChange
+   change = volumeChange
 } 

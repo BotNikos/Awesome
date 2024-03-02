@@ -126,7 +126,7 @@ orange = "#FF9C32"
 majenta = "#FF79C6"
 blue = "#7CCCDF"
 
-local popups = require "widgets/popups"
+local sidebar = require "widgets/sidebar"
 for s in screen do
 
    awful.tag({ "", "", "", ""}, s, awful.layout.layouts[2])
@@ -237,7 +237,7 @@ for s in screen do
                      forced_width = 30,
                      forced_height = 30,
                      buttons = {
-                        awful.button ({}, 1, nil, popups.systemInfoOpen)
+                        awful.button ({}, 1, nil, sidebar.toggle)
                      },
                      widget = wibox.widget.imagebox,
                   },
