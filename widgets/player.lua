@@ -34,6 +34,38 @@ local playerTitle = awful.widget.watch ("playerctl metadata -p " .. currentPlaye
                                            widget.text = (out ~= "") and out or "Nothing plays"
 end, playerTitleBlank)
 
+-- TODO: create popup with all available players
+local selectorIcon = wibox.widget {
+   {
+      image = os.getenv ("HOME") .. '/.config/awesome/icons/feather_48px/chevron-down.svg',
+      forced_width = 24,
+      forced_height = 24,
+      halign = "center",
+      widget = wibox.widget.imagebox
+   },
+
+   buttons = {
+      awful.button ({}, 1, nil, function () naughty.notify {message = "Hello ?"} end)
+   },
+
+   bg = colors.background2,
+   widget = wibox.container.background
+}
+
+selectorIcon:connect_signal("mouse::enter", function () selectorIcon.bg = colors.violet end)
+selectorIcon:connect_signal("mouse::leave", function () selectorIcon.bg = colors.background2 end)
+
+local titleContainer = wibox.widget {
+
+   playerTitle,
+   selectorIcon,
+
+   layout = wibox.layout.ratio.horizontal
+}
+
+titleContainer:set_ratio (1, 0.9)
+titleContainer:set_ratio (2, 0.1)
+
 local playerAuthorBlank = wibox.widget {
    font = "Mononoki Nerd Font 14",
    text = "Here need to be song author",
@@ -157,7 +189,7 @@ local player = wibox.widget {
       {
          playerIcon,
          {
-            playerTitle,
+            titleContainer,
             playerAuthor,
             progressContainer,
             buttonsContainer,
