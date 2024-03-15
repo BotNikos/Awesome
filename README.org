@@ -1,0 +1,58 @@
+#+TITLE: Awesome config
+#+AUTHOR: BoT_Nikos
+
+* Icons
+This config uses feather icons. You can find it
+in the icons folder
+
+* Autostart
+This file runs everytime after reloading awesome and
+do things such as setting up wallpapers, starting compositor and a few more
+
+* Colors
+File for import to other files, that contains current colors of window manager.
+Temporary solution. All colors need to be in theme file.
+
+* Widgets
+
+** Sidebar
+
+Little widget that opens sidebar on pressing
+mod4-i or by mouse clicking on special wibar icon.
+
+Here you can change some settings of system, and
+see common state of things.
+
+Sidebar includes the following widgets:
+
+*** Player [[./widgets/player.lua]] [0/2]
+
+Here you can control your current playback of
+choosed player.
+
+Widget requires playerctl console utility
+to skip, toggle tracks and curl to downloading images.
+Images downloading in tmp directory.
+
+TODO:
+ - [ ] Preferd player selection for controling multiple players
+
+BUGFIX:
+ - [ ] Song time on progressbar and timer displays incorrect 
+
+*** Screen control [[./widgets/monitorToggler.lua]]
+
+This widget currently can toggle your monitor from 'left-of' mode to
+'mirror-mode' and back.
+
+ - [ ] Better chosing of monitors positions
+
+*** Compositor control [[./widgets/compositorToggler.lua]]
+
+This widget allows you to toggle your compositor.
+Currently works only with compfy.
+
+*** Power control [[./widgets/power.lua]]
+
+Allows you to reboot, shutdown and logout from your current session.
+
