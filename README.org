@@ -37,9 +37,6 @@ Images downloading in tmp directory.
 TODO:
  - [ ] Preferd player selection for controling multiple players
 
-BUGFIX:
- - [ ] Song time on progressbar and timer displays incorrect 
-
 *** Screen control [[./widgets/monitorToggler.lua]]
 
 This widget currently can toggle your monitor from 'left-of' mode to
