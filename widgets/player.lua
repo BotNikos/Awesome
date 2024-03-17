@@ -34,7 +34,57 @@ local playerTitle = awful.widget.watch ("playerctl metadata -p " .. currentPlaye
                                            widget.text = (out ~= "") and out or "Nothing plays"
 end, playerTitleBlank)
 
--- TODO: create popup with all available players
+local selectorLabelsBlank = wibox.widget {
+   layout = wibox.layout.fixed.vertical
+}
+
+local allPlayers = {}
+local selectorLabels = awful.widget.watch ("playerctl -l", 1, function (widget, out)
+                                              local players = gears.string.split (out, "\n")
+
+                                              if (allPlayers ~= out) then
+                                                 widget:reset()
+                                                 for index, value in pairs (players) do
+                                                    if index ~= gears.table.count_keys(players) then
+                                                       widget:add (wibox.widget {
+                                                                      text = value,
+                                                                      font = "Mononoki Nerd Font Bold 14",
+
+                                                                      forced_height = 30,
+
+                                                                      buttons = {
+                                                                         awful.button ({}, 1, nil, function ()
+                                                                         --       currentPlayer = value
+                                                                         --       playerTitle = awful.widget.watch ("playerctl metadata -p " .. currentPlayer .. " --format '{{title}}'", 1, function (widget, out)
+                                                                         --                                            widget.text = (out ~= "") and out or "Nothing plays"
+                                                                         --       end, playerTitleBlank)
+                                                                         end)
+                                                                      },
+
+                                                                      widget = wibox.widget.textbox
+                                                       })
+                                                    end 
+                                                 end
+                                              end
+
+                                              allPlayers = out
+
+end, selectorLabelsBlank)
+
+local selectorPopup = awful.popup {
+   widget = {
+      selectorLabels,
+      margins = 10,
+      widget = wibox.container.margin,
+   },
+
+   -- placement = awful.placement.right,
+   visible = true,
+   ontop = true,
+   border_width = 2,
+   border_color = colors.violet,
+}
+
 local selectorIcon = wibox.widget {
    {
       image = os.getenv ("HOME") .. '/.config/awesome/icons/feather_48px/chevron-down.svg',
@@ -44,9 +94,7 @@ local selectorIcon = wibox.widget {
       widget = wibox.widget.imagebox
    },
 
-   buttons = {
-      awful.button ({}, 1, nil, function () naughty.notify {message = "Hello ?"} end)
-   },
+   buttons = {awful.button ({}, 1, nil, function () selectorPopup.visible = not selectorPopup.visible end)},
 
    bg = colors.background2,
    widget = wibox.container.background
@@ -76,6 +124,7 @@ local playerAuthor = awful.widget.watch ("playerctl metadata -p " .. currentPlay
                                             widget.text = (out ~= "") and out or "Turn on some song"
 end, playerAuthorBlank)
 
+-- TODO: Change for get time from h:m:s format
 function timeToSec (time)
    local timeSplited = gears.string.split(time, ":")
    return tonumber(timeSplited[1]) * 60 + tonumber(timeSplited[2]) -- 60 seconds in minute
