@@ -81,11 +81,12 @@ local keys = gears.table.join (
    awful.key({modkey}, "r", function () awful.spawn("rofi -show drun") end, {description = "Run rofi", group = "launcher"}),
 
    -- Custom keybindings
-   awful.key({modkey, "Shift"}, "m",
+
+   awful.key({modkey}, "m",
       function ()
-         awful.spawn("spotify")
+         awful.spawn(terminal .. " ranger")
       end,
-      {decription = "Run spotify", group = "applications"}
+      {decription = "Run ranger", group = "applications"}
    ),
 
    awful.key({modkey}, "e",
