@@ -8,31 +8,22 @@ local colors = require "colors"
 local currentPlayer = "spotify"
 local lastIconPath = ""
 
-local playerIconBlank = wibox.widget {
+
+local playerIcon = wibox.widget {
       resize = true,
       forced_width = 150,
       forced_height = 150,
+      halign = 'center',
+      valign = 'center',
       widget = wibox.widget.imagebox
 }
 
-local playerIcon = awful.widget.watch ("playerctl metadata -p " .. currentPlayer .. " --format '{{mpris:artUrl}}'", 1, function (widget, out)
-                                          if out ~= lastIconPath then
-                                             awful.spawn.easy_async_with_shell ("curl -o ~/.config/awesome/tmp/playerIcon.png " .. out, function ()
-                                                                                   widget.image = gears.surface.load_uncached (os.getenv ("HOME") .. "/.config/awesome/tmp/playerIcon.png")
-                                             end)
-                                          end
-end, playerIconBlank)
-
-local playerTitleBlank = wibox.widget {
+local playerTitle = wibox.widget {
    font = "Mononoki Nerd Font Bold 24",
    text = "Here need to be song title",
    forced_height = 40,
    widget = wibox.widget.textbox
 }
-
-local playerTitle = awful.widget.watch ("playerctl metadata -p " .. currentPlayer .. " --format '{{title}}'", 1, function (widget, out)
-                                           widget.text = (out ~= "") and out or "Nothing plays"
-end, playerTitleBlank)
 
 local selectorLabelsBlank = wibox.widget {
    layout = wibox.layout.fixed.vertical
@@ -53,12 +44,7 @@ local selectorLabels = awful.widget.watch ("playerctl -l", 1, function (widget, 
                                                                       forced_height = 30,
 
                                                                       buttons = {
-                                                                         awful.button ({}, 1, nil, function ()
-                                                                         --       currentPlayer = value
-                                                                         --       playerTitle = awful.widget.watch ("playerctl metadata -p " .. currentPlayer .. " --format '{{title}}'", 1, function (widget, out)
-                                                                         --                                            widget.text = (out ~= "") and out or "Nothing plays"
-                                                                         --       end, playerTitleBlank)
-                                                                         end)
+                                                                         awful.button ({}, 1, nil, function () updatePlayer (value) end)
                                                                       },
 
                                                                       widget = wibox.widget.textbox
@@ -78,8 +64,7 @@ local selectorPopup = awful.popup {
       widget = wibox.container.margin,
    },
 
-   -- placement = awful.placement.right,
-   visible = true,
+   visible = false,
    ontop = true,
    border_width = 2,
    border_color = colors.violet,
@@ -94,7 +79,13 @@ local selectorIcon = wibox.widget {
       widget = wibox.widget.imagebox
    },
 
-   buttons = {awful.button ({}, 1, nil, function () selectorPopup.visible = not selectorPopup.visible end)},
+   buttons = {awful.button ({}, 1, nil, function ()
+                    local sidebar = mouse.object_under_pointer ()
+
+                    selectorPopup.x = sidebar.x + sidebar.width - 240 - 63 -- 240 is selectorPopup width, 64 - right offset 
+                    selectorPopup.y = mouse.object_under_pointer().y + 22 -- 22 - top offset
+                    selectorPopup.visible = not selectorPopup.visible
+   end)},
 
    bg = colors.background2,
    widget = wibox.container.background
@@ -114,24 +105,23 @@ local titleContainer = wibox.widget {
 titleContainer:set_ratio (1, 0.9)
 titleContainer:set_ratio (2, 0.1)
 
-local playerAuthorBlank = wibox.widget {
+local playerAuthor = wibox.widget {
    font = "Mononoki Nerd Font 14",
    text = "Here need to be song author",
    widget = wibox.widget.textbox
 }
 
-local playerAuthor = awful.widget.watch ("playerctl metadata -p " .. currentPlayer .. " --format '{{artist}}'", 1, function (widget, out)
-                                            widget.text = (out ~= "") and out or "Turn on some song"
-end, playerAuthorBlank)
-
--- TODO: Change for get time from h:m:s format
 function timeToSec (time)
    local timeSplited = gears.string.split(time, ":")
-   return tonumber(timeSplited[1]) * 60 + tonumber(timeSplited[2]) -- 60 seconds in minute
+
+   if gears.table.count_keys(timeSplited) < 3 then
+      return tonumber(timeSplited[1]) * 60 + tonumber(timeSplited[2]) -- 60 seconds in minute
+   else
+      return tonumber(timeSplited[1]) * 3600 + tonumber(timeSplited[2]) * 60 + tonumber(timeSplited[3])
+   end
 end
 
--- TODO: Add fuction to seek track
-local playerProgressBlank = wibox.widget {
+local playerProgress = wibox.widget {
    value = 25,
    max_value = 100,
    color = colors.violet,
@@ -151,14 +141,58 @@ local playerTime = wibox.widget {
    widget = wibox.widget.textbox
 }
 
-local playerProgress = awful.widget.watch ("playerctl metadata -p " .. currentPlayer .. " --format '{{duration(position)}}|{{duration(mpris:length)}}'", 1, function (widget, out)
-                                              outSplited = gears.string.split (out, "|")
-                                              widget.value = timeToSec(outSplited[1])
-                                              widget.max_value = timeToSec(outSplited[2])
+-- player status update
+local updateTimer = gears.timer {
+   timeout = 1,
+   autostart = true,
+   callback = function ()
+      imageUpdate ()
+      updateTitle ()
+      updateAuthor ()
+      updateProgress ()
+   end
+}
 
-                                              maxTimeTrimmed = gears.string.split (outSplited[2], "\n")
-                                              playerTime.text = outSplited[1] .. "/" .. maxTimeTrimmed[1]
-end, playerProgressBlank)
+function updatePlayer (player)
+   currentPlayer = player 
+   updateTimer:emit_signal('timeout')
+   selectorPopup.visible = false
+end
+
+function imageUpdate ()
+   awful.spawn.easy_async_with_shell ("playerctl metadata -p " .. currentPlayer .. " --format '{{mpris:artUrl}}'", function (out)
+                                             if out ~= lastIconPath then
+                                                awful.spawn.easy_async_with_shell ("curl -o ~/.config/awesome/tmp/playerIcon.png " .. out, function ()
+                                                                                      playerIcon.image = gears.surface.load_uncached (os.getenv ("HOME") .. "/.config/awesome/tmp/playerIcon.png")
+                                                end)
+                                             end
+   end)
+end
+
+function updateTitle ()
+   awful.spawn.easy_async_with_shell ("playerctl metadata -p " .. currentPlayer .. " --format '{{title}}'", function (out)
+                                           playerTitle.text = (out ~= "") and out or "Nothing plays"
+   end)
+end
+
+function updateAuthor ()
+   awful.spawn.easy_async_with_shell ("playerctl metadata -p " .. currentPlayer .. " --format '{{artist}}'", function (out)
+                                               playerAuthor.text = (out ~= "") and out or "Turn on some song"
+   end)
+end
+
+function updateProgress ()
+   awful.spawn.easy_async_with_shell ("playerctl metadata -p " .. currentPlayer .. " --format '{{duration(position)}}|{{duration(mpris:length)}}'", function (out)
+                                                 outSplited = gears.string.split (out, "|")
+                                                 playerProgress.value = timeToSec(outSplited[1])
+                                                 playerProgress.max_value = timeToSec(outSplited[2])
+
+                                                 maxTimeTrimmed = gears.string.split (outSplited[2], "\n")
+                                                 playerTime.text = outSplited[1] .. "/" .. maxTimeTrimmed[1]
+   end)
+end
+
+
 
 local progressContainer = wibox.widget {
    {
@@ -171,15 +205,15 @@ local progressContainer = wibox.widget {
    layout = wibox.layout.ratio.horizontal
 }
 
-progressContainer:set_ratio(1, 0.75)
-progressContainer:set_ratio(2, 0.25)
+progressContainer:set_ratio(1, 0.6)
+progressContainer:set_ratio(2, 0.4)
 
 local buttonPrevious = wibox.widget {
    {
       image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/skip-back.svg",
       halign = 'center',
       buttons = {
-         awful.button ({}, 1, nil, function () awful.spawn ("playerctl previous") end)
+         awful.button ({}, 1, nil, function () awful.spawn ("playerctl -p " .. currentPlayer .. " previous") end)
       },
       widget = wibox.widget.imagebox 
    },
@@ -197,7 +231,7 @@ local buttonTogglePause = wibox.widget {
       forced_height = buttonSize,
       halign = 'center',
       buttons = {
-         awful.button ({}, 1, nil, function () awful.spawn ("playerctl play-pause") end)
+         awful.button ({}, 1, nil, function () awful.spawn ("playerctl -p " .. currentPlayer .. " play-pause") end)
       },
       widget = wibox.widget.imagebox 
    },
@@ -214,7 +248,7 @@ local buttonNext = wibox.widget {
       forced_height = buttonSize,
       halign = 'center',
       buttons = {
-         awful.button ({}, 1, nil, function () awful.spawn ("playerctl next") end)
+         awful.button ({}, 1, nil, function () awful.spawn ("playerctl -p " .. currentPlayer .. " next") end)
       },
       widget = wibox.widget.imagebox 
    },
@@ -257,4 +291,7 @@ local player = wibox.widget {
    widget = wibox.container.background
 }
 
-return player
+return {
+   widget = player,
+   selector = selectorPopup
+} 

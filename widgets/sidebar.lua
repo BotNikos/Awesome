@@ -24,7 +24,7 @@ togglersContainer:set_ratio (2, 0.5)
 local sidebar = awful.popup {
    widget = {
       {
-         player,
+         player.widget,
          togglersContainer,
          powerControl,
          layout = wibox.layout.fixed.vertical
@@ -53,11 +53,15 @@ local sidebarCloseTimer = gears.timer {
    single_shot = true,
    callback = function ()
       sidebar.visible = false
+      player.selector.visible = false
    end
 }
 
 sidebar:connect_signal("mouse::leave", function () sidebarCloseTimer:again() end)
 sidebar:connect_signal("mouse::enter", function () sidebarCloseTimer:stop() end)
+
+player.selector:connect_signal("mouse::leave", function () sidebarCloseTimer:again() end)
+player.selector:connect_signal("mouse::enter", function () sidebarCloseTimer:stop() end)
 
 return {
    widget = sidebar,
