@@ -25,7 +25,7 @@ see common state of things.
 
 Sidebar includes the following widgets:
 
-*** Player [[./widgets/player.lua]] [0/2]
+*** Player [[./widgets/player.lua]]
 
 Here you can control your current playback of
 choosed player.
@@ -33,9 +33,6 @@ choosed player.
 Widget requires playerctl console utility
 to skip, toggle tracks and curl to downloading images.
 Images downloading in tmp directory.
-
-TODO:
- - [ ] Preferd player selection for controling multiple players
 
 *** Screen control [[./widgets/monitorToggler.lua]]
 

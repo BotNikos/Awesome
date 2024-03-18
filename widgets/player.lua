@@ -5,9 +5,8 @@ local naughty = require("naughty")
 
 local colors = require "colors"
 
-local currentPlayer = "spotify"
+local currentPlayer = ""
 local lastIconPath = ""
-
 
 local playerIcon = wibox.widget {
       resize = true,
@@ -30,30 +29,46 @@ local selectorLabelsBlank = wibox.widget {
 }
 
 local allPlayers = {}
+local playersCount = 0
 local selectorLabels = awful.widget.watch ("playerctl -l", 1, function (widget, out)
                                               local players = gears.string.split (out, "\n")
+                                              playersCount = gears.table.count_keys(players)
+                                              players[playersCount] = nil -- delete "\n" (last) element
 
                                               if (allPlayers ~= out) then
                                                  widget:reset()
                                                  for index, value in pairs (players) do
-                                                    if index ~= gears.table.count_keys(players) then
-                                                       widget:add (wibox.widget {
-                                                                      text = value,
-                                                                      font = "Mononoki Nerd Font Bold 14",
+                                                    widget:add (wibox.widget {
+                                                                   text = value,
+                                                                   font = "Mononoki Nerd Font Bold 14",
 
-                                                                      forced_height = 30,
+                                                                   forced_height = 30,
 
-                                                                      buttons = {
-                                                                         awful.button ({}, 1, nil, function () updatePlayer (value) end)
-                                                                      },
+                                                                   buttons = {
+                                                                      awful.button ({}, 1, nil, function () updatePlayer (value) end)
+                                                                   },
 
-                                                                      widget = wibox.widget.textbox
-                                                       })
-                                                    end 
+                                                                   widget = wibox.widget.textbox
+                                                    })
                                                  end
                                               end
 
-                                              allPlayers = out
+                                              if gears.table.hasitem (allPlayers, currentPlayer) == nil then
+                                                 currentPlayer = ""
+
+                                                 widget:add (wibox.widget {
+                                                                text = "Not found",
+                                                                font = "Mononoki Nerd Font Bold 14",
+                                                                forced_height = 30,
+                                                                widget = wibox.widget.textbox
+                                                 })
+                                              end
+
+                                              if playersCount > 0 and currentPlayer == "" then
+                                                    currentPlayer = players[1]
+                                              end
+
+                                              allPlayers = players
 
 end, selectorLabelsBlank)
 
@@ -61,8 +76,10 @@ local selectorPopup = awful.popup {
    widget = {
       selectorLabels,
       margins = 10,
+      forced_width = 130,
       widget = wibox.container.margin,
    },
+
 
    visible = false,
    ontop = true,
@@ -82,8 +99,8 @@ local selectorIcon = wibox.widget {
    buttons = {awful.button ({}, 1, nil, function ()
                     local sidebar = mouse.object_under_pointer ()
 
-                    selectorPopup.x = sidebar.x + sidebar.width - 240 - 63 -- 240 is selectorPopup width, 64 - right offset 
-                    selectorPopup.y = mouse.object_under_pointer().y + 22 -- 22 - top offset
+                    selectorPopup.x = sidebar.x + sidebar.width - 130 - 22 -- 130 is selectorPopup width, 22 - right offset 
+                    selectorPopup.y = mouse.object_under_pointer().y + 22 + 40 -- 22 - top offset, 40 - icon height
                     selectorPopup.visible = not selectorPopup.visible
    end)},
 
@@ -146,10 +163,12 @@ local updateTimer = gears.timer {
    timeout = 1,
    autostart = true,
    callback = function ()
-      imageUpdate ()
-      updateTitle ()
-      updateAuthor ()
-      updateProgress ()
+      if playersCount ~= 0 and currentPlayer ~= "" then
+         imageUpdate ()
+         updateTitle ()
+         updateAuthor ()
+         updateProgress ()
+      end
    end
 }
 
@@ -159,6 +178,7 @@ function updatePlayer (player)
    selectorPopup.visible = false
 end
 
+-- TODO: image if song not playing
 function imageUpdate ()
    awful.spawn.easy_async_with_shell ("playerctl metadata -p " .. currentPlayer .. " --format '{{mpris:artUrl}}'", function (out)
                                              if out ~= lastIconPath then
@@ -191,8 +211,6 @@ function updateProgress ()
                                                  playerTime.text = outSplited[1] .. "/" .. maxTimeTrimmed[1]
    end)
 end
-
-
 
 local progressContainer = wibox.widget {
    {
