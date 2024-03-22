@@ -45,7 +45,7 @@ local selectorLabels = awful.widget.watch ("playerctl -l", 1, function (widget, 
                                                                    forced_height = 30,
 
                                                                    buttons = {
-                                                                      awful.button ({}, 1, nil, function () updatePlayer (value) end)
+                                                                      awful.button ({}, 1, nil, function () updateSelectedPlayer (value) end)
                                                                    },
 
                                                                    widget = wibox.widget.textbox
@@ -155,15 +155,28 @@ local playerProgress = wibox.widget {
 local playerTime = wibox.widget {
    font = "Mononoki Nerd Font 14",
    text = "0:00/0:00",
+   halign = "right",
    widget = wibox.widget.textbox
 }
 
--- player status update
+local progressContainer = wibox.widget {
+   {
+      playerProgress,
+      right = 10,
+      widget = wibox.container.margin
+   },
+   playerTime,
+   forced_width = 430,
+   layout = wibox.layout.ratio.horizontal
+}
+
+local status = ""
 local updateTimer = gears.timer {
    timeout = 1,
    autostart = true,
    callback = function ()
-      if playersCount ~= 0 and currentPlayer ~= "" then
+      checkStatus ()
+      if playersCount ~= 0 and currentPlayer ~= "" and status ~= "Stopped" then
          imageUpdate ()
          updateTitle ()
          updateAuthor ()
@@ -172,7 +185,14 @@ local updateTimer = gears.timer {
    end
 }
 
-function updatePlayer (player)
+function checkStatus ()
+   awful.spawn.easy_async_with_shell ('playerctl -p ' .. currentPlayer .. ' status', function (out)
+                                         local statusTrimmed = gears.string.split (out, '\n') 
+                                         status = statusTrimmed[1]
+   end)
+end
+
+function updateSelectedPlayer (player)
    currentPlayer = player 
    updateTimer:emit_signal('timeout')
    selectorPopup.visible = false
@@ -209,22 +229,17 @@ function updateProgress ()
 
                                                  maxTimeTrimmed = gears.string.split (outSplited[2], "\n")
                                                  playerTime.text = outSplited[1] .. "/" .. maxTimeTrimmed[1]
+
+                                                 if playerProgress.max_value >= 3600 then
+                                                    progressContainer:set_ratio(1, 0.6)
+                                                    progressContainer:set_ratio(2, 0.4)
+                                                 else
+                                                    progressContainer:set_ratio(1, 0.75)
+                                                    progressContainer:set_ratio(2, 0.25)
+                                                 end
    end)
 end
 
-local progressContainer = wibox.widget {
-   {
-      playerProgress,
-      right = 10,
-      widget = wibox.container.margin
-   },
-   playerTime,
-   forced_width = 430,
-   layout = wibox.layout.ratio.horizontal
-}
-
-progressContainer:set_ratio(1, 0.6)
-progressContainer:set_ratio(2, 0.4)
 
 local buttonPrevious = wibox.widget {
    {
