@@ -170,12 +170,12 @@ local progressContainer = wibox.widget {
    layout = wibox.layout.ratio.horizontal
 }
 
-local status = ""
+local status = "Stopped"
 local updateTimer = gears.timer {
    timeout = 1,
    autostart = true,
    callback = function ()
-      checkStatus ()
+      checkStatus () -- asign current status to status var on 173 line
       if playersCount ~= 0 and currentPlayer ~= "" and status ~= "Stopped" then
          imageUpdate ()
          updateTitle ()
@@ -230,7 +230,10 @@ function updateProgress ()
                                                  maxTimeTrimmed = gears.string.split (outSplited[2], "\n")
                                                  playerTime.text = outSplited[1] .. "/" .. maxTimeTrimmed[1]
 
-                                                 if playerProgress.max_value >= 3600 then
+                                                 if playerProgress.max_value >= 600 then
+                                                    progressContainer:set_ratio(1, 0.7)
+                                                    progressContainer:set_ratio(2, 0.3)
+                                                 elseif playerProgress.max_value >= 3600 then
                                                     progressContainer:set_ratio(1, 0.6)
                                                     progressContainer:set_ratio(2, 0.4)
                                                  else
@@ -320,7 +323,7 @@ local player = wibox.widget {
    },
 
    bg = colors.background2,
-   forced_width = 600,
+   -- forced_width = 600,
    widget = wibox.container.background
 }
 

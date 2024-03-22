@@ -9,7 +9,7 @@ local player = require "widgets/player"
 local monitorToggler = require "widgets/monitorToggler"
 local powerControl = require "widgets/power"
 local compositorToggler = require "widgets/compositorToggler"
-local calendar = require "widgets/calendar"
+local systemResources = require "widgets/systemResources"
 
 local togglersContainer = wibox.widget {
    monitorToggler,
@@ -21,12 +21,18 @@ local togglersContainer = wibox.widget {
 togglersContainer:set_ratio (1, 0.5)
 togglersContainer:set_ratio (2, 0.5)
 
+
+-- TODO: Add spacing property to widgets layout, and delete all margins in childs
 local sidebar = awful.popup {
    widget = {
       {
+         systemResources,
          player.widget,
-         togglersContainer,
+         togglersContainer, -- contains monitortoggler and compositortoggler
          powerControl,
+
+         forced_width = 600,
+
          layout = wibox.layout.fixed.vertical
       },
       margins = 10,
