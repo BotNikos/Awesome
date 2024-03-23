@@ -206,20 +206,6 @@ for s in screen do
             s.mytasklist,
             {
                layout = wibox.layout.fixed.horizontal,
-               -- Memory
-               {
-                  widget = wibox.container.background,
-                  bg = blue,
-                  fg = background,
-                  {
-                     widget = awful.widget.watch('free -m', 1, function (widget, out)
-                                                    local total = string.match(out, "%d+")
-                                                    local totalCharNum = string.find(out, "%d+")
-                                                    local used = string.match(out, "%d+", totalCharNum + 5)
-                                                    widget:set_text(" Memory: "..used.." MB / "..total.." MB ")
-                     end),
-                  }
-               },
 
                {
                   widget = wibox.container.background,

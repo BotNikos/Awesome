@@ -28,7 +28,8 @@ Sidebar includes the following widgets:
 *** [[./widgets/systemResources.lua][Resources]]
 
 Shows current state of system resources.
-CPU get data from *mpstat* command
+CPU get data from *mpstat* command. Others
+indicators uses alredy preinstalled commands.
 
 *** [[./widgets/player.lua][Player]]
 
@@ -36,7 +37,7 @@ Here you can control your current playback of
 choosed player.
 
 Widget requires *playerctl* console utility
-to skip, toggle tracks and curl to downloading images.
+to skip, toggle tracks and *curl* to downloading images.
 Images downloading in tmp directory.
 
 *** [[./widgets/monitorToggler.lua][Screen control]]
