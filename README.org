@@ -5,6 +5,8 @@
 - OS: Arch linux
 - Terminal: Kitty
 - Shell: Fish
+- Icons: Feather
+- Color theme: Draclua
 - App menu: Rofi
 - Compositor: Compfy
 - Fonts:
@@ -12,17 +14,9 @@
   * Mononoki Nerd Font
 - File manager: ranger
 
-* Icons
-This config uses feather icons. You can find it
-in the icons folder
-
 * Autostart
 This file runs everytime after reloading awesome and
 do things such as setting up wallpapers, starting compositor and a few more
-
-* Colors
-File for import to other files, that contains current colors of window manager.
-Temporary solution. All colors need to be in theme file.
 
 * Widgets
 
