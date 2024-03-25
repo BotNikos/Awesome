@@ -1,6 +1,17 @@
 #+TITLE: Awesome config
 #+AUTHOR: BoT_Nikos
 
+* Fast review
+- OS: Arch linux
+- Terminal: Kitty
+- Shell: Fish
+- App menu: Rofi
+- Compositor: Compfy
+- Fonts:
+  * Fira Code
+  * Mononoki Nerd Font
+- File manager: ranger
+
 * Icons
 This config uses feather icons. You can find it
 in the icons folder
@@ -90,6 +101,7 @@ Here you can see all most usable keys in this config.
 |------------+------------------------------|
 | S-RET      | Opens a terminal             |
 | S-r        | Rofi                         |
+| S-m        | Ranger                       |
 | S-i        | Open sidebar                 |
 | S-Spc      | Change kblayout              |
 | S-Tab      | Change current layout        |
