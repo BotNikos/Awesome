@@ -31,6 +31,33 @@ Shows current state of system resources.
 CPU get data from *mpstat* command. Others
 indicators uses alredy preinstalled commands.
 
+*** [[./widgets/updates.lua][Updates]]
+Shows how many packages you need to update.
+Works *only* on Arch linux.
+
+If you want make it working with another distro,
+you need to change 44 and 56 lines for your
+updating commands
+
+44 line:
+#+BEGIN_SRC  lua
+   buttons = {
+      awful.button ({}, 1, nil, function () awful.spawn (terminal .. ' your command to update system') end)
+   },
+#+END_SRC
+
+56 line:
+#+BEGIN_SRC  lua
+  gears.timer {
+     ...
+     callback = function ()
+        awful.spawn.easy_async_with_shell ('Your command to check updates count', function (out)
+            -- Your code, what to show in widget textbox
+        end)
+     end
+  }
+#+END_SRC
+
 *** [[./widgets/player.lua][Player]]
 
 Here you can control your current playback of
@@ -43,16 +70,33 @@ Images downloading in tmp directory.
 *** [[./widgets/monitorToggler.lua][Screen control]]
 
 This widget currently can toggle your monitor from 'left-of' mode to
-'mirror-mode' and back.
+'mirror-mode' and back. Uses *xrandr*
 
  - [ ] Better chosing of monitors positions
 
 *** [[./widgets/compositorToggler.lua][Compositor control]]
 
 This widget allows you to toggle your compositor.
-Currently works only with compfy.
+Currently works only with *compfy*.
 
 *** [[./widgets/power.lua][Power control]]
 
 Allows you to reboot, shutdown and logout from your current session.
+
+** Keybindings
+Here you can see all most usable keys in this config.
+
+| Keybinding | Desc                         |
+|------------+------------------------------|
+| S-RET      | Opens a terminal             |
+| S-r        | Rofi                         |
+| S-i        | Open sidebar                 |
+| S-Spc      | Change kblayout              |
+| S-Tab      | Change current layout        |
+| S-p        | Pause-play current playback  |
+| S-=        | Increase system volume       |
+| S-<->      | Decrease system volume       |
+| S-[        | Previous song                |
+| S-]        | Next song                    |
+| S-Shift-F  | Make focused window floating |
 
