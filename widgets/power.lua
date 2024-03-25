@@ -79,26 +79,12 @@ shutdown:connect_signal("mouse::enter", function () shutdown.bg = colors.violet 
 shutdown:connect_signal("mouse::leave", function () shutdown.bg = colors.background2 end)
 
 local powerControl = wibox.widget {
-   {
-      {
-         reboot,
-         right = 10,
-         widget = wibox.container.margin
-      },
-      {
-         logout,
-         right = 10,
-         widget = wibox.container.margin
-      },
-      shutdown,
-      widget = wibox.layout.ratio.horizontal,
-   },
-   top = 10,
-   widget = wibox.container.margin
-}
+   reboot,
+   logout,
+   shutdown,
 
-powerControl.widget:set_ratio(1, 0.33)
-powerControl.widget:set_ratio(2, 0.33)
-powerControl.widget:set_ratio(3, 0.33)
+   spacing = 10,
+   widget = wibox.layout.flex.horizontal
+}
 
 return powerControl

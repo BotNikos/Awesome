@@ -1,6 +1,7 @@
 local gears = require("gears")
 local awful = require("awful")
 local wibox = require("wibox")
+local naughty = require ("naughty")
 
 local colors = require "colors"
 
@@ -41,6 +42,8 @@ popup:connect_signal("mouse::enter", function () popupCloseTimer:stop() end)
 
 function toggle ()
    local currentScreen = awful.screen.focused ()
+
+   popup.width = 336
    popup.y = 60 
    popup.x = currentScreen.workarea.x + currentScreen.workarea.width - popup.width - 15
    popup.visible = not popup.visible 

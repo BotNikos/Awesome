@@ -28,44 +28,38 @@ end
 
 local monitorToggler = wibox.widget {
    {
-
       {
          {
-            {
-               image = os.getenv("HOME") .. "/.config/awesome/icons/feather_48px/monitor.svg",
-               forced_width = 30,
-               forced_height = 30,
-               halign = "center",
-               valing = "center",
-               widget = wibox.widget.imagebox
-            },
-
-            {
-               togglerText,
-               margins = 10,
-               widget = wibox.container.margin
-            },
-
-            widget = wibox.layout.fixed.vertical
+            image = os.getenv("HOME") .. "/.config/awesome/icons/feather_48px/monitor.svg",
+            forced_width = 30,
+            forced_height = 30,
+            halign = "center",
+            valing = "center",
+            widget = wibox.widget.imagebox
          },
-         margins = 10,
-         widget = wibox.container.margin
-      },
 
-      buttons = {
-         awful.button ({}, 1, nil, toggle)
+         {
+            togglerText,
+            margins = 10,
+            widget = wibox.container.margin
+         },
+
+         widget = wibox.layout.fixed.vertical
       },
-      
-      bg = colors.background2,
-      widget = wibox.container.background
+      margins = 10,
+      widget = wibox.container.margin
    },
-   top = 10,
-   right = 10,
-   widget = wibox.container.margin
+
+   buttons = {
+      awful.button ({}, 1, nil, toggle)
+   },
+   
+   bg = colors.background2,
+   widget = wibox.container.background
 }
 
-monitorToggler.widget:connect_signal("mouse::enter", function () monitorToggler.widget.bg = colors.violet end)
-monitorToggler.widget:connect_signal("mouse::leave", function () monitorToggler.widget.bg = colors.background2 end)
+monitorToggler:connect_signal("mouse::enter", function () monitorToggler.bg = colors.violet end)
+monitorToggler:connect_signal("mouse::leave", function () monitorToggler.bg = colors.background2 end)
 
 return monitorToggler
 

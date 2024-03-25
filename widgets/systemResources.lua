@@ -140,7 +140,6 @@ local discLoad = wibox.widget {
 }
 
 local disc =  wibox.widget {
-
    {
       {
          {
@@ -176,7 +175,6 @@ local disc =  wibox.widget {
 }
 
 -- Get disc pecentage
-
 gears.timer {
    timeout = 3,
    autostart = true,
@@ -194,7 +192,7 @@ function backgroundContainer (wgt, marginSize, spacing)
       {
          wgt,
 
-         forced_width = sidebarSize / 3 - spacing / 2, 
+         -- forced_width = sidebarSize / 3 - spacing / 2, 
          forced_height = sidebarSize / 3 - spacing / 2,
 
          margins = marginSize,
@@ -206,19 +204,21 @@ function backgroundContainer (wgt, marginSize, spacing)
    }
 end
 
--- TODO: Something wrong with disck contanier size 😩 
+-- TODO: Something wrong with disck contanier size (-_-) 
 local systemResources = wibox.widget {
    backgroundContainer (cpu, 10, 10),
    backgroundContainer (ram, 10, 10),
    backgroundContainer (disc, 10, 10),
 
+   buttons = {
+      awful.button ({}, 1, nil, function ()
+            awful.spawn (terminal .. ' btop')
+      end)
+   },
+
    spacing = 10,
-   layout = wibox.layout.fixed.horizontal
+   layout = wibox.layout.flex.horizontal
 }
 
-return wibox.widget {
-   systemResources,
-   bottom = 10,
-   widget = wibox.container.margin
-}
+return systemResources
 

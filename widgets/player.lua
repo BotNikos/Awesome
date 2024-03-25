@@ -80,7 +80,6 @@ local selectorPopup = awful.popup {
       widget = wibox.container.margin,
    },
 
-
    visible = false,
    ontop = true,
    border_width = 2,
@@ -96,13 +95,16 @@ local selectorIcon = wibox.widget {
       widget = wibox.widget.imagebox
    },
 
-   buttons = {awful.button ({}, 1, nil, function ()
-                    local sidebar = mouse.object_under_pointer ()
+   buttons = {
+      awful.button ({}, 1, nil, function ()
+            local sidebar = mouse.object_under_pointer ()
 
-                    selectorPopup.x = sidebar.x + sidebar.width - 130 - 22 -- 130 is selectorPopup width, 22 - right offset 
-                    selectorPopup.y = mouse.object_under_pointer().y + 22 + 40 -- 22 - top offset, 40 - icon height
-                    selectorPopup.visible = not selectorPopup.visible
-   end)},
+            selectorPopup.width = 130
+            selectorPopup.x = sidebar.x + sidebar.width - selectorPopup.width - 22 -- 22 - right offset 
+            selectorPopup.y = mouse.object_under_pointer().y + 22 + 40 -- 22 - top offset, 40 - icon height
+            selectorPopup.visible = not selectorPopup.visible
+      end)
+   },
 
    bg = colors.background2,
    widget = wibox.container.background
@@ -323,7 +325,6 @@ local player = wibox.widget {
    },
 
    bg = colors.background2,
-   -- forced_width = 600,
    widget = wibox.container.background
 }
 
