@@ -17,6 +17,7 @@ local playerIcon = wibox.widget {
       widget = wibox.widget.imagebox
 }
 
+-- TODO: Make it wibox.container.scroll
 local playerTitle = wibox.widget {
    font = "Mononoki Nerd Font Bold 24",
    text = "Here need to be song title",
@@ -114,7 +115,6 @@ selectorIcon:connect_signal("mouse::enter", function () selectorIcon.bg = colors
 selectorIcon:connect_signal("mouse::leave", function () selectorIcon.bg = colors.background2 end)
 
 local titleContainer = wibox.widget {
-
    playerTitle,
    selectorIcon,
 
@@ -124,6 +124,7 @@ local titleContainer = wibox.widget {
 titleContainer:set_ratio (1, 0.9)
 titleContainer:set_ratio (2, 0.1)
 
+-- TODO: Make it wibox.container.scroll
 local playerAuthor = wibox.widget {
    font = "Mononoki Nerd Font 14",
    text = "Here need to be song author",

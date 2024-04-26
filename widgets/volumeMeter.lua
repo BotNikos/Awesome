@@ -12,8 +12,8 @@ local volumeMeter = awful.popup {
    widget = {
 
       {
-         max_value = 10,
-         value = 5,
+         max_value = 100,
+         value = 50,
          paddings = 5,
          forced_width = 500,
          forced_height = 50,
@@ -40,17 +40,17 @@ local volumeMeter = awful.popup {
 
 function volumeChange (action)
    if action == "increase" then
-      awful.spawn("pamixer -i 10")
+      awful.spawn("pamixer -i 1")
    else
-      awful.spawn("pamixer -d 10")
+      awful.spawn("pamixer -d 1")
    end
 
    awful.spawn.easy_async_with_shell ("pamixer --get-volume", function (out)
-                                         local volumeLevel = math.floor(out / 10)
+                                         local volumeLevel = tonumber (out)
                                          volumeMeter : setup {
 
                                             {
-                                               max_value = 10,
+                                               max_value = 100,
                                                value = volumeLevel,
                                                paddings = 5,
                                                forced_width = 500,
@@ -64,7 +64,7 @@ function volumeChange (action)
 
                                             {
                                                font = "Fira Code Bold 25",
-                                               text = tostring (volumeLevel) .. "/10",
+                                               text = tostring (volumeLevel) .. "/100",
                                                align = "center",
                                                valign = "center",
                                                halign = "center",

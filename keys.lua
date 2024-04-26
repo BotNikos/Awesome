@@ -14,10 +14,12 @@ local kblayout = require "widgets/kblayout"
 local volumeMeter = require "widgets/volumeMeter"
 
 local keys = gears.table.join (
+
    awful.key ({modkey}, "Escape", function ()
          sidebar.widget.visible = false
          calendar.widget.visible = false
    end),
+
    awful.key({modkey}, "i", sidebar.toggle, {description="Open system info", group="popups"}),
 
    awful.key({ modkey,           }, "s",      hotkeys_popup.show_help, {description="show help", group="awesome"}),

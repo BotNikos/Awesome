@@ -182,15 +182,11 @@ for s in screen do
 
    s.mywibox = awful.wibar {
       position = "top",
-      height = 50,
+      height = 30,
       screen = s,
-      bg = "#00000000"
    }
 
    s.mywibox:setup {
-      widget = wibox.container.margin,
-      margins = 10,
-      {
          widget = wibox.container.background,
          bg = background,
          {
@@ -233,7 +229,6 @@ for s in screen do
                s.mylayoutbox,
             }
          }
-      }
    }
 end
 
