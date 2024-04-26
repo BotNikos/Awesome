@@ -14,41 +14,7 @@ local updatesCount = wibox.widget {
    widget = wibox.widget.textbox
 }
 
-local updates = wibox.widget {
-   {
-      {
-         {
-            {
-               image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/arrow-down-circle.svg",
-               forced_width = 30,
-               forced_height = 30,
-               halign = "center",
-               valign = "center",
-               widget = wibox.widget.imagebox,
-            },
-
-            right = 10,
-            widget = wibox.container.margin
-         },
-
-         updatesCount,
-
-         layout = wibox.layout.fixed.horizontal
-      },
-
-      margins = 10,
-      widget = wibox.container.margin
-   },
-
-   buttons = {
-      awful.button ({}, 1, nil, function () awful.spawn (terminal .. 'sudo pacman -Suy ') end)
-   },
-
-   bg = colors.background2,
-   widget = wibox.container.background
-}
-
-gears.timer {
+local checkTimer = gears.timer {
    timeout = 3600,
    autostart = true,
    call_now = true,
@@ -76,5 +42,43 @@ gears.timer {
       end)
    end
 }
+
+local updates = wibox.widget {
+   {
+      {
+         {
+            {
+               image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/arrow-down-circle.svg",
+               forced_width = 30,
+               forced_height = 30,
+               halign = "center",
+               valign = "center",
+               widget = wibox.widget.imagebox,
+            },
+
+            right = 10,
+            widget = wibox.container.margin
+         },
+
+         updatesCount,
+
+         layout = wibox.layout.fixed.horizontal
+      },
+
+      margins = 10,
+      widget = wibox.container.margin
+   },
+
+   buttons = {
+      awful.button ({}, 1, nil, function () awful.spawn.easy_async_with_shell (terminal .. ' sudo pacman -Suy ', function () checkTimer:emit_signal ('timeout') end) end)
+   },
+
+   bg = colors.background2,
+   widget = wibox.container.background
+}
+
+updates:connect_signal ("mouse::enter", function () updates.bg = colors.violet end)
+updates:connect_signal ("mouse::leave", function () updates.bg = colors.background2 end)
+
 
 return updates
