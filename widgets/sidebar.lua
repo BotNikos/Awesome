@@ -12,6 +12,8 @@ local compositorToggler = require "widgets/compositorToggler"
 local systemResources = require "widgets/systemResources"
 local updates = require "widgets/updates"
 
+local notifStorage = require "widgets/notifStorage"
+
 local togglersContainer = wibox.widget {
    monitorToggler,
    compositorToggler,
@@ -25,6 +27,7 @@ local sidebar = awful.popup {
    widget = {
       {
          player.widget,
+         notifStorage,
          updates,
          systemResources,
          togglersContainer, -- contains monitortoggler and compositortoggler
