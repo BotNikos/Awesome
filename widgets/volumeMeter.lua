@@ -64,7 +64,7 @@ function volumeChange (action)
 
                                             {
                                                font = "Fira Code Bold 25",
-                                               text = tostring (volumeLevel) .. "/100",
+                                               text = tostring (volumeLevel) .. "/100 ",
                                                align = "center",
                                                valign = "center",
                                                halign = "center",
