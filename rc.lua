@@ -127,6 +127,8 @@ majenta = "#FF79C6"
 blue = "#7CCCDF"
 
 local sidebar = require "widgets/sidebar"
+local notifStorage = require "widgets/notifStorage"
+
 for s in screen do
 
    awful.tag({ "", "", "", ""}, s, awful.layout.layouts[2])
@@ -193,6 +195,24 @@ for s in screen do
             layout = wibox.layout.align.horizontal,
             {
                layout = wibox.layout.fixed.horizontal,
+               {
+                  {
+                     image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/menu.svg",
+
+                     forced_width = 20,
+                     forced_height = 20,
+
+                     halign = "center",
+                     valign = "center",
+
+                     buttons = {
+                        awful.button ({}, 1, nil, sidebar.toggle)
+                     },
+                     widget = wibox.widget.imagebox,
+                  },
+                  left = 5,
+                  widget = wibox.container.margin
+               },
                s.mytaglist,
                { -- empty textbox instead of spacing widget
                   widget = wibox.widget.textbox,
@@ -215,14 +235,20 @@ for s in screen do
                mytextclock,
                {
                   {
-                     image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/sidebar.svg",
-                     forced_width = 30,
-                     forced_height = 30,
+                     image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/bell.svg",
+
+                     forced_width = 20,
+                     forced_height = 20,
+
+                     halign = "center",
+                     valign = "center",
+
                      buttons = {
-                        awful.button ({}, 1, nil, sidebar.toggle)
+                        awful.button ({}, 1, nil, notifStorage.toggle)
                      },
                      widget = wibox.widget.imagebox,
                   },
+
                   right = 5,
                   widget = wibox.container.margin
                },

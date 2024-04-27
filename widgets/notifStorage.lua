@@ -5,29 +5,11 @@ local naughty = require("naughty")
 
 local colors = require "colors"
 
-local container = wibox.widget {
-}
-
--- local text = wibox.widget {
---    text = "0",
---    widget = wibox.widget.textbox
--- }
-
--- wibox {
---    x = 100,
---    y = 100,
---    width = 1000,
---    height = 20,
---    widget = text,
---    border_width = 2,
---    border_color = colors.violet,
---    ontop = true,
---    visible = true
--- }
-
+-- TODO:
+-- Reset widget when sidebar opens
+-- A notification style
 local notifStorage = wibox.widget {
    spacing = 10,
-   forced_height = 200,
    layout = wibox.layout.fixed.vertical
 }
 
@@ -74,5 +56,62 @@ naughty.connect_signal ('added', function (notif)
                            })
 end)
 
-return notifStorage
+local notifWin = wibox {
+   width = 620,
+   height = 500,
 
+   widget = wibox.widget {
+      {
+         {
+            font = "Mononoki Nerd Font Bold 24",
+            text = "Notifications:",
+            valign = "center",
+            halign = "center",
+            widget = wibox.widget.textbox
+         },
+
+         {
+            {
+               orientation = "horizontal",
+               forced_height = 6,
+               thickness = 2,
+               span_ratio = 0.8,
+               color = colors.violet,
+
+               widget = wibox.widget.separator
+            },
+
+            top = 3,
+            bottom = 10,
+            widget = wibox.container.margin
+         },
+
+         notifStorage,
+         layout = wibox.layout.fixed.vertical
+      },
+      margins = 10,
+      widget = wibox.container.margin
+   },
+
+   border_width = 2,
+   border_color = colors.violet,
+
+   ontop = true,
+   visible = false
+}
+
+function toggle ()
+   local currentScreen = awful.screen.focused ()
+
+   notifWin:geometry ({
+         x = currentScreen.workarea.x + currentScreen.workarea.width - notifWin.width - 15,
+         y = currentScreen.workarea.y + 10 
+   })
+
+   notifWin.visible = not notifWin.visible
+end
+
+return {
+   toggle = toggle,
+   widget = notifWin,
+}

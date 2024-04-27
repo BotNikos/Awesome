@@ -12,6 +12,7 @@ local sidebar = require "widgets/sidebar"
 local calendar = require "widgets/calendar"
 local kblayout = require "widgets/kblayout"
 local volumeMeter = require "widgets/volumeMeter"
+local notifStorage = require "widgets/notifStorage"
 
 local keys = gears.table.join (
 
@@ -20,7 +21,8 @@ local keys = gears.table.join (
          calendar.widget.visible = false
    end),
 
-   awful.key({modkey}, "i", sidebar.toggle, {description="Open system info", group="popups"}),
+   awful.key ({modkey}, "i", sidebar.toggle, {description = "Open system info", group = "popups"}),
+   awful.key ({modkey}, 'n', notifStorage.toggle, {description = "Opens notification center", group = "popups"}),
 
    awful.key({ modkey,           }, "s",      hotkeys_popup.show_help, {description="show help", group="awesome"}),
 
