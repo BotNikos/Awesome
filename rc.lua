@@ -233,6 +233,30 @@ for s in screen do
                },
                wibox.widget.systray(),
                mytextclock,
+
+               {
+                  {
+                     image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/feather.svg",
+
+                     forced_width = 20,
+                     forced_height = 20,
+
+                     halign = "center",
+                     valign = "center",
+
+                     buttons = {
+                        awful.button ({}, 1, nil, function ()
+                              awful.spawn.with_shell ('~/colorpicker/colorpicker --one-shot | xclip -selection clipboard && notify-send "Colorpicker" "$(xclip -o -selection clipboard)"')
+                        end)
+                     },
+
+                     widget = wibox.widget.imagebox,
+                  },
+
+                  right = 5,
+                  widget = wibox.container.margin
+               },
+
                {
                   {
                      image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/bell.svg",
