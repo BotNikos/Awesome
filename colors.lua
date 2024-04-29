@@ -7,6 +7,7 @@ colors = {}
 colors.background = "#282A36"
 colors.background2 = "#383A59"
 colors.foreground = "#F4F4EF"
+colors.foregroundDim = "#6272A4"
 colors.violet = "#BD93F9"
 colors.orange = "#FF9C32"
 colors.majenta = "#FF79C6"
