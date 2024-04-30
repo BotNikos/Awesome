@@ -37,21 +37,15 @@ CPU get data from *mpstat* command. Others
 indicators uses alredy preinstalled commands.
 
 *** [[./widgets/updates.lua][Updates]]
+
 Shows how many packages you need to update.
 Works *only* on Arch linux.
 
 If you want make it working with another distro,
-you need to change 44 and 56 lines for your
+you need to change 22 and 73 lines for your
 updating commands
 
-44 line:
-#+BEGIN_SRC  lua
-   buttons = {
-      awful.button ({}, 1, nil, function () awful.spawn (terminal .. ' your command to update system') end)
-   },
-#+END_SRC
-
-56 line:
+22 line:
 #+BEGIN_SRC  lua
   gears.timer {
      ...
@@ -62,6 +56,14 @@ updating commands
      end
   }
 #+END_SRC
+
+73 line:
+#+BEGIN_SRC  lua
+   buttons = {
+      awful.button ({}, 1, nil, function () awful.spawn (terminal .. ' your command to update system') end)
+   },
+#+END_SRC
+
 
 *** [[./widgets/player.lua][Player]]
 
@@ -87,6 +89,11 @@ Currently works only with *compfy*.
 *** [[./widgets/power.lua][Power control]]
 
 Allows you to reboot, shutdown and logout from your current session.
+
+** Notifications center
+Stores all notifications that system previously show.
+This widget have problems with the scroll. Idk how to make it scrollable
+right way (︶ω︶) 
 
 ** Keybindings
 Here you can see all most usable keys in this config.

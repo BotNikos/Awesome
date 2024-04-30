@@ -22,7 +22,7 @@ local cpu = wibox.widget {
 
       {
          {
-            image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/cpu.svg",
+            image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/cpu.svg",
 
             forced_width = 50,
             forced_height = 50,
@@ -81,7 +81,7 @@ local ram = wibox.widget {
    {
       {
          {
-            image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/database.svg",
+            image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/database.svg",
 
             forced_width = 50,
             forced_height = 50,
@@ -143,7 +143,7 @@ local disc =  wibox.widget {
    {
       {
          {
-            image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/hard-drive.svg",
+            image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/hard-drive.svg",
 
             halign = "center",
             valign = "center",

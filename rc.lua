@@ -197,7 +197,7 @@ for s in screen do
                layout = wibox.layout.fixed.horizontal,
                {
                   {
-                     image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/menu.svg",
+                     image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/menu.svg",
 
                      forced_width = 20,
                      forced_height = 20,
@@ -236,7 +236,7 @@ for s in screen do
 
                {
                   {
-                     image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/feather.svg",
+                     image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/feather.svg",
 
                      forced_width = 20,
                      forced_height = 20,
@@ -246,7 +246,7 @@ for s in screen do
 
                      buttons = {
                         awful.button ({}, 1, nil, function ()
-                              awful.spawn.with_shell ('~/colorpicker/colorpicker --one-shot | xclip -selection clipboard && notify-send "Colorpicker" "$(xclip -o -selection clipboard)"')
+                              awful.spawn.with_shell ('~/colorpicker/colorpicker --one-shot | xclip -selection clipboard && notify-send -i ~/.config/awesome/icons/feather_100px/droplet.svg "Colorpicker" "$(xclip -o -selection clipboard)"')
                         end)
                      },
 
@@ -259,7 +259,7 @@ for s in screen do
 
                {
                   {
-                     image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/bell.svg",
+                     image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/bell.svg",
 
                      forced_width = 20,
                      forced_height = 20,

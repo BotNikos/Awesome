@@ -30,7 +30,7 @@ local monitorToggler = wibox.widget {
    {
       {
          {
-            image = os.getenv("HOME") .. "/.config/awesome/icons/feather_48px/monitor.svg",
+            image = os.getenv("HOME") .. "/.config/awesome/icons/feather_100px/monitor.svg",
             forced_width = 30,
             forced_height = 30,
             halign = "center",

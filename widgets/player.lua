@@ -89,7 +89,7 @@ local selectorPopup = awful.popup {
 
 local selectorIcon = wibox.widget {
    {
-      image = os.getenv ("HOME") .. '/.config/awesome/icons/feather_48px/chevron-down.svg',
+      image = os.getenv ("HOME") .. '/.config/awesome/icons/feather_100px/chevron-down.svg',
       forced_width = 24,
       forced_height = 24,
       halign = "center",
@@ -249,7 +249,7 @@ end
 
 local buttonPrevious = wibox.widget {
    {
-      image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/skip-back.svg",
+      image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/skip-back.svg",
       halign = 'center',
       buttons = {
          awful.button ({}, 1, nil, function () awful.spawn ("playerctl -p " .. currentPlayer .. " previous") end)
@@ -265,7 +265,7 @@ buttonPrevious:connect_signal("mouse::leave", function () buttonPrevious.bg = co
 -- TODO: Toggle icon after click
 local buttonTogglePause = wibox.widget {
    {
-      image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/pause.svg",
+      image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/pause.svg",
       forced_width = buttonSize,
       forced_height = buttonSize,
       halign = 'center',
@@ -282,7 +282,7 @@ buttonTogglePause:connect_signal("mouse::leave", function () buttonTogglePause.b
 
 local buttonNext = wibox.widget {
    {
-      image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/skip-forward.svg",
+      image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/skip-forward.svg",
       forced_width = buttonSize,
       forced_height = buttonSize,
       halign = 'center',

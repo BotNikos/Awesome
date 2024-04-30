@@ -73,11 +73,14 @@ function volumeChange (action)
 
                                             {
                                                {
-                                                  resize = false,
-                                                  align = "center",
+                                                  image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/volume.svg",
+
+                                                  forced_width = 48,
+                                                  forced_height = 48,
+
                                                   valign = "center",
                                                   halign = "center",
-                                                  image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/volume.svg",
+
                                                   widget = wibox.widget.imagebox 
                                                },
 

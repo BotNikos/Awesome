@@ -19,7 +19,7 @@ local compositorToggler = wibox.widget {
    {
       {
          {
-            image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/zap.svg",
+            image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/zap.svg",
             forced_width = 30,
             forced_height = 30,
             halign = "center",

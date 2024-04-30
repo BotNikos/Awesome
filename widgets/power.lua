@@ -6,7 +6,7 @@ local colors = require "colors"
 local reboot = wibox.widget {
    {
       {
-         image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/rotate-ccw.svg",
+         image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/rotate-ccw.svg",
          forced_width = 50,
          forced_height = 50,
          halign = "center",
@@ -31,7 +31,7 @@ reboot:connect_signal("mouse::leave", function () reboot.bg = colors.background2
 local logout = wibox.widget {
    {
       {
-         image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/log-out.svg",
+         image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/log-out.svg",
          forced_width = 50,
          forced_height = 50,
          halign = "center",
@@ -56,7 +56,7 @@ logout:connect_signal("mouse::leave", function () logout.bg = colors.background2
 local shutdown = wibox.widget {
    {
       {
-         image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_48px/power.svg",
+         image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/power.svg",
          forced_width = 50,
          forced_height = 50,
          halign = "center",

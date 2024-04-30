@@ -6,29 +6,13 @@ local naughty = require("naughty")
 local colors = require "colors"
 
 -- TODO:
--- Reset widget when sidebar opens
--- Clear all notifications
--- Normal scrolling
+-- Clear all notifications button
+-- Scroll container
+
 local notifStorage = wibox.widget {
    spacing = 10,
    layout = wibox.layout.fixed.vertical
 }
-
---scroll up
-notifStorage:add_button (awful.button ({}, 4, nil, function ()
-      local tableLen = gears.table.count_keys (notifStorage.children)
-      for index, value in pairs (notifStorage.children) do
-         notifStorage:swap (index, tableLen)
-      end
-end))
-
--- scroll down
-notifStorage:add_button (awful.button ({}, 5, nil, function ()
-      for index, value in pairs (notifStorage.children) do
-         notifStorage:swap (index, index - 1)
-      end
-end))
-
 
 local textNothing = wibox.widget {
    font = "Mononoki Nerd Font Bold 28",
@@ -39,6 +23,8 @@ local textNothing = wibox.widget {
    visible = true,
    widget = wibox.widget.textbox
 }
+
+local scrollWidget = wibox.widget.base.make_widget ()
 
 local notifWidget = wibox.widget {
    {
@@ -67,13 +53,19 @@ local notifWidget = wibox.widget {
       },
 
       textNothing,
-      notifStorage,
+      scrollWidget,
 
       layout = wibox.layout.fixed.vertical
    },
    margins = 10,
    widget = wibox.container.margin
 }
+
+local scrollY = 0
+
+function scrollWidget:layout (context, width, height)
+   return { wibox.widget.base.place_widget_at (notifStorage, 0, scrollY, 600, 10000) }
+end
 
 local notifWin = wibox {
    width = 620,
@@ -86,6 +78,27 @@ local notifWin = wibox {
    ontop = true,
    visible = false
 }
+
+-- scroll up
+scrollWidget:add_button (awful.button ({}, 4, nil, function ()
+                               if scrollY ~= 0 then
+                                  scrollY = scrollY + 20 
+                               end
+                               scrollWidget:emit_signal ("widget::layout_changed")
+end))
+
+-- scroll down
+scrollWidget:add_button (awful.button ({}, 5, nil, function ()
+                               -- 110 - one notification card height
+                               -- 440 - height of visible window
+
+                               local storageHeight = gears.table.count_keys(notifStorage.children) * 110
+
+                               if storageHeight - 440 > 0 and math.abs (scrollY) <= storageHeight - 440 then
+                                  scrollY = scrollY - 20 
+                               end
+                               scrollWidget:emit_signal ("widget::layout_changed")
+end))
 
 local closeTimer = gears.timer {
    timeout = 1,
@@ -101,6 +114,9 @@ notifWin:connect_signal("mouse::enter", function () closeTimer:stop() end)
 function toggle ()
    local currentScreen = awful.screen.focused ()
 
+   scrollY = 0
+   scrollWidget:emit_signal ("widget::layout_changed")
+
    notifWin:geometry ({
          x = currentScreen.workarea.x + currentScreen.workarea.width - notifWin.width - 15,
          y = currentScreen.workarea.y + 10 
@@ -115,7 +131,9 @@ naughty.connect_signal ('added', function (notif)
                                              {
                                                 {
                                                    {
-                                                      image = notif.image,
+                                                      image = notif.icon,
+                                                      halign = "center",
+                                                      valign = "center",
                                                       forced_width = 80,
                                                       forced_height = 80,
                                                       widget = wibox.widget.imagebox
@@ -149,6 +167,65 @@ naughty.connect_signal ('added', function (notif)
                                              widget = wibox.container.background 
                            })
 end)
+
+-- Scrollable container example
+---------------------------------------------------------
+
+-- local w = wibox { x = 100,
+--                  y = 100,
+
+--                  width = 100,
+--                  height = 100,
+
+--                  border_width = 2,
+--                  border_color = colors.violet,
+
+--                  ontop = true,
+--                  visible = true
+-- }
+
+-- my_wiget = function()
+--    return wibox.widget {
+--       text = "H\nE\nL\nL\nO\n \nW\nO\nR\nL\nD\n",
+--       widget = wibox.widget.textbox
+--    }
+
+-- end
+
+-- local own_widget = wibox.widget.base.make_widget()
+-- local offset_x, offset_y = 0, 0
+-- function own_widget:layout(context, width, height)
+--     -- No idea how to pick good widths and heights for the inner widget.
+--    return { wibox.widget.base.place_widget_at(my_wiget (), offset_x, offset_y, 100, 100) }
+-- end
+
+-- own_widget:buttons(
+--     awful.util.table.join(
+--         awful.button(
+--             {},
+--             4,
+--             function()
+--                 if offset_y <= 490 then
+--                     offset_y = offset_y + 5
+--                 end
+--                 own_widget:emit_signal("widget::layout_changed")
+--             end
+--         ),
+--         awful.button(
+--             {},
+--             5,
+--             function()
+--                 if offset_y >= 5 then
+--                     offset_y = offset_y - 5
+--                 end
+--                 own_widget:emit_signal("widget::layout_changed")
+--             end
+--         )
+--     )
+-- )
+
+-- w:set_widget(own_widget)
+
 
 return {
    toggle = toggle,
