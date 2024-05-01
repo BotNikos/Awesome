@@ -64,7 +64,6 @@ updating commands
    },
 #+END_SRC
 
-
 *** [[./widgets/player.lua][Player]]
 
 Here you can control your current playback of
@@ -90,10 +89,8 @@ Currently works only with *compfy*.
 
 Allows you to reboot, shutdown and logout from your current session.
 
-** Notifications center
+**  [[./widgets/notifStorage.lua][Notifications center]]
 Stores all notifications that system previously show.
-This widget have problems with the scroll. Idk how to make it scrollable
-right way (︶ω︶) 
 
 ** Keybindings
 Here you can see all most usable keys in this config.
