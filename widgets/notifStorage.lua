@@ -25,7 +25,7 @@ local scrollWidget = wibox.widget.base.make_widget ()
 local clearButton = wibox.widget {
    {
       {
-         image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/trash-2.svg",
+         image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_white/trash-2.svg",
 
          forced_width = 30,
          forced_height = 30,

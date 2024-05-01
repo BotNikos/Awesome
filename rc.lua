@@ -68,6 +68,8 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 
 -- {{{ Wibar
 -- Create a textclock widget
+local colors = require "colors"
+
 mytextclock = wibox.widget.textclock()
 mytextclock.format = " %I:%M:%S %p "
 mytextclock.refresh = 1
@@ -117,7 +119,6 @@ local tasklist_buttons = gears.table.join(
 end))
 
 -- colors
-local colors = require "colors"
 background = "#282A36"
 background2 = "#383A59"
 foreground = "#F4F4EF"
@@ -197,7 +198,7 @@ for s in screen do
                layout = wibox.layout.fixed.horizontal,
                {
                   {
-                     image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/menu.svg",
+                     image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_white/menu.svg",
 
                      forced_width = 20,
                      forced_height = 20,
@@ -208,8 +209,11 @@ for s in screen do
                      buttons = {
                         awful.button ({}, 1, nil, sidebar.toggle)
                      },
+
                      widget = wibox.widget.imagebox,
+
                   },
+
                   left = 5,
                   widget = wibox.container.margin
                },
@@ -223,6 +227,61 @@ for s in screen do
             {
                layout = wibox.layout.fixed.horizontal,
 
+               wibox.widget.systray(),
+
+               {
+                  {
+                     {
+                        {
+                           image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_black/feather.svg",
+
+                           forced_width = 20,
+                           forced_height = 20,
+
+                           halign = "center",
+                           valign = "center",
+
+                           buttons = {
+                              awful.button ({}, 1, nil, function ()
+                                    awful.spawn.with_shell ('~/colorpicker/colorpicker --one-shot | xclip -selection clipboard && notify-send -i ~/.config/awesome/icons/feather_white/droplet.svg "Colorpicker" "$(xclip -o -selection clipboard)"')
+                              end)
+                           },
+
+                           widget = wibox.widget.imagebox,
+                        },
+
+                        left = 10,
+                        right = 10,
+                        widget = wibox.container.margin
+                     },
+
+                     {
+                        {
+                           image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_black/bell.svg",
+
+                           forced_width = 20,
+                           forced_height = 20,
+
+                           halign = "center",
+                           valign = "center",
+
+                           buttons = {
+                              awful.button ({}, 1, nil, notifStorage.toggle)
+                           },
+                           widget = wibox.widget.imagebox,
+                        },
+
+                        right = 10,
+                        widget = wibox.container.margin
+                     },
+
+                     layout = wibox.layout.fixed.horizontal
+                  },
+
+                  bg = colors.orange,
+                  widget = wibox.container.background
+               },
+
                {
                   widget = wibox.container.background,
                   bg = majenta,
@@ -231,51 +290,9 @@ for s in screen do
                      widget = mykeyboardlayout
                   }
                },
-               wibox.widget.systray(),
+
                mytextclock,
 
-               {
-                  {
-                     image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/feather.svg",
-
-                     forced_width = 20,
-                     forced_height = 20,
-
-                     halign = "center",
-                     valign = "center",
-
-                     buttons = {
-                        awful.button ({}, 1, nil, function ()
-                              awful.spawn.with_shell ('~/colorpicker/colorpicker --one-shot | xclip -selection clipboard && notify-send -i ~/.config/awesome/icons/feather_100px/droplet.svg "Colorpicker" "$(xclip -o -selection clipboard)"')
-                        end)
-                     },
-
-                     widget = wibox.widget.imagebox,
-                  },
-
-                  right = 5,
-                  widget = wibox.container.margin
-               },
-
-               {
-                  {
-                     image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/bell.svg",
-
-                     forced_width = 20,
-                     forced_height = 20,
-
-                     halign = "center",
-                     valign = "center",
-
-                     buttons = {
-                        awful.button ({}, 1, nil, notifStorage.toggle)
-                     },
-                     widget = wibox.widget.imagebox,
-                  },
-
-                  right = 5,
-                  widget = wibox.container.margin
-               },
                s.mylayoutbox,
             }
          }

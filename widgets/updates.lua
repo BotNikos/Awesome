@@ -48,7 +48,7 @@ local updates = wibox.widget {
       {
          {
             {
-               image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/arrow-down-circle.svg",
+               image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_white/arrow-down-circle.svg",
                forced_width = 30,
                forced_height = 30,
                halign = "center",

@@ -73,7 +73,7 @@ function volumeChange (action)
 
                                             {
                                                {
-                                                  image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/volume.svg",
+                                                  image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_white/volume.svg",
 
                                                   forced_width = 48,
                                                   forced_height = 48,
