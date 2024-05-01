@@ -89,12 +89,12 @@ end))
 
 -- scroll down
 scrollWidget:add_button (awful.button ({}, 5, nil, function ()
-                               -- 110 - one notification card height
-                               -- 440 - height of visible window
+                               local notifCardHeight = 80
+                               local visibleWindowHeight = 440
 
-                               local storageHeight = gears.table.count_keys(notifStorage.children) * 110
+                               local storageHeight = gears.table.count_keys(notifStorage.children) *  notifCardHeight 
 
-                               if storageHeight - 440 > 0 and math.abs (scrollY) <= storageHeight - 440 then
+                               if storageHeight - visibleWindowHeight > 0 and math.abs (scrollY) <= storageHeight - visibleWindowHeight then
                                   scrollY = scrollY - 20 
                                end
                                scrollWidget:emit_signal ("widget::layout_changed")
@@ -134,22 +134,40 @@ naughty.connect_signal ('added', function (notif)
                                                       image = notif.icon,
                                                       halign = "center",
                                                       valign = "center",
-                                                      forced_width = 80,
-                                                      forced_height = 80,
+                                                      forced_width = 50,
+                                                      forced_height = 50,
                                                       widget = wibox.widget.imagebox
                                                    },
 
                                                    {
+
                                                       {
-                                                         font = "Mononoki Nerd Font Bold 20",
-                                                         text = notif.title,
-                                                         widget = wibox.widget.textbox
+                                                         {
+                                                            font = "Mononoki Nerd Font Bold 20",
+                                                            text = notif.title,
+                                                            widget = wibox.widget.textbox
+                                                         },
+
+                                                         step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
+                                                         speed = 100,
+                                                         set_fps = 60,
+
+                                                         layout = wibox.container.scroll.horizontal,
+
                                                       },
 
                                                       {
-                                                         font = "Mononoki Nerd Font Bold 16",
-                                                         text = notif.text,
-                                                         widget = wibox.widget.textbox
+                                                         {
+                                                            font = "Mononoki Nerd Font Bold 16",
+                                                            text = notif.text,
+                                                            widget = wibox.widget.textbox
+                                                         },
+
+                                                         step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
+                                                         speed = 100,
+                                                         set_fps = 60,
+
+                                                         layout = wibox.container.scroll.horizontal,
                                                       },
 
                                                       layout = wibox.layout.fixed.vertical
