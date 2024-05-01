@@ -5,10 +5,6 @@ local naughty = require("naughty")
 
 local colors = require "colors"
 
--- TODO:
--- Clear all notifications button
--- Scroll container
-
 local notifStorage = wibox.widget {
    spacing = 10,
    layout = wibox.layout.fixed.vertical
@@ -26,14 +22,53 @@ local textNothing = wibox.widget {
 
 local scrollWidget = wibox.widget.base.make_widget ()
 
-local notifWidget = wibox.widget {
+local clearButton = wibox.widget {
    {
       {
-         font = "Mononoki Nerd Font Bold 24",
-         text = "Notifications:",
+         image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_100px/trash-2.svg",
+
+         forced_width = 30,
+         forced_height = 30,
+
+         halign = "center",
          valign = "center",
-         halign = "left",
-         widget = wibox.widget.textbox
+
+         widget = wibox.widget.imagebox
+      },
+
+      margins = 10,
+      widget = wibox.container.margin
+   },
+
+   buttons = {
+      awful.button ({}, 1, nil, function ()
+            notifStorage:reset ()
+            textNothing.visible = true
+      end)
+   },
+   
+   layout = wibox.container.background
+}
+
+clearButton:connect_signal ("mouse::enter", function () clearButton.bg = colors.violet end)
+clearButton:connect_signal ("mouse::leave", function () clearButton.bg = colors.background end)
+
+local notifWidget = wibox.widget {
+   {
+
+      {
+         {
+            font = "Mononoki Nerd Font Bold 24",
+            text = "Notifications:",
+            valign = "center",
+            halign = "left",
+            forced_width = 550,
+            widget = wibox.widget.textbox
+         },
+
+         clearButton,
+         
+         layout = wibox.layout.fixed.horizontal
       },
 
       {
@@ -53,7 +88,7 @@ local notifWidget = wibox.widget {
       },
 
       textNothing,
-      scrollWidget,
+      notifStorage,
 
       layout = wibox.layout.fixed.vertical
    },
@@ -64,14 +99,14 @@ local notifWidget = wibox.widget {
 local scrollY = 0
 
 function scrollWidget:layout (context, width, height)
-   return { wibox.widget.base.place_widget_at (notifStorage, 0, scrollY, 600, 10000) }
+   return { wibox.widget.base.place_widget_at (notifWidget, 0, scrollY, 620, 10000) }
 end
 
 local notifWin = wibox {
    width = 620,
    height = 500,
 
-   widget = notifWidget,
+   widget = scrollWidget,
    border_width = 2,
    border_color = colors.violet,
 
@@ -89,12 +124,13 @@ end))
 
 -- scroll down
 scrollWidget:add_button (awful.button ({}, 5, nil, function ()
-                               local notifCardHeight = 80
-                               local visibleWindowHeight = 440
+                               local notifCardHeight = 85 
+                               local notifWinHeight = 500 
+                               local notifWinTitleHeight = 70 
 
-                               local storageHeight = gears.table.count_keys(notifStorage.children) *  notifCardHeight 
+                               local contentHeight = gears.table.count_keys(notifStorage.children) * notifCardHeight + notifWinTitleHeight
 
-                               if storageHeight - visibleWindowHeight > 0 and math.abs (scrollY) <= storageHeight - visibleWindowHeight then
+                               if contentHeight - notifWinHeight > 0 and math.abs (scrollY) <= contentHeight - notifWinHeight then
                                   scrollY = scrollY - 20 
                                end
                                scrollWidget:emit_signal ("widget::layout_changed")
