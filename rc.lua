@@ -129,6 +129,7 @@ blue = "#7CCCDF"
 
 local sidebar = require "widgets/sidebar"
 local notifStorage = require "widgets/notifStorage"
+local mount = require "widgets/mount"
 
 for s in screen do
 
@@ -257,6 +258,29 @@ for s in screen do
 
                      {
                         {
+                           image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_black/disc.svg",
+
+                           forced_width = 20,
+                           forced_height = 20,
+
+                           halign = "center",
+                           valign = "center",
+
+                           buttons = {
+                              awful.button ({}, 1, nil, function ()
+                                    mount.toggle ()
+                              end)
+                           },
+
+                           widget = wibox.widget.imagebox,
+                        },
+
+                        right = 10,
+                        widget = wibox.container.margin
+                     },
+
+                     {
+                        {
                            image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_black/bell.svg",
 
                            forced_width = 20,
@@ -278,7 +302,7 @@ for s in screen do
                      layout = wibox.layout.fixed.horizontal
                   },
 
-                  bg = colors.orange,
+                  bg = colors.blue,
                   widget = wibox.container.background
                },
 

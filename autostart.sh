@@ -6,5 +6,3 @@ sh ~/Wallpapers/imageSetter.sh
 
 killall compfy
 compfy --daemon
-
-xset s on

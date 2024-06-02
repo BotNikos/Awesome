@@ -84,6 +84,7 @@ local notifWidget = wibox.widget {
 
          top = 3,
          bottom = 10,
+         right = 200,
          widget = wibox.container.margin
       },
 
