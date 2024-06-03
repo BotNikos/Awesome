@@ -43,7 +43,7 @@ local mount = wibox.widget {
 
 local window = wibox {
    width = 300,
-   height = 250,
+   height = 75,
 
    border_width = 2,
    border_color = colors.violet,
@@ -78,46 +78,62 @@ function toggle ()
                                          local discsSplited = gears.string.split (out, '\n')
                                          discsSplited[gears.table.count_keys(discsSplited)] = nil -- delete last element
 
+                                         window.height = gears.table.count_keys(discsSplited) * 50 + 75 
+
                                          for index, value in pairs (discsSplited) do
                                             list:add (wibox.widget {
                                                          {
-                                                            font = "Mononoki Nerd Font Bold 14",
-                                                            text = gears.string.split (value, "|")[1],
+                                                            {
+                                                               {
+                                                                  font = "Mononoki Nerd Font Bold 14",
+                                                                  text = gears.string.split (value, "|")[1],
 
-                                                            forced_width = 120,
+                                                                  forced_width = 120,
 
-                                                            widget = wibox.widget.textbox
+                                                                  widget = wibox.widget.textbox
+                                                               },
+
+                                                               {
+                                                                  font = "Mononoki Nerd Font Bold 14",
+                                                                  text = gears.string.split (value, "|")[2],
+
+                                                                  forced_width = 120,
+
+                                                                  halign = "center",
+                                                                  valign = "center",
+
+                                                                  widget = wibox.widget.textbox
+                                                               },
+
+                                                               {
+                                                                  image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_white/download.svg",
+                                                                  forced_height = 20,
+                                                                  forced_width = 20,
+                                                                  halign = "right",
+                                                                  valign = "center",
+                                                                  widget = wibox.widget.imagebox
+                                                               },
+
+                                                               buttons = {
+                                                                  awful.button ({}, 1, nil, function ()
+                                                                        awful.spawn.easy_async_with_shell (terminal .. " sudo mount /dev/" .. gears.string.split (value, "|")[1] .. " ~/mnt", function () end)
+                                                                  end)
+                                                               },
+
+                                                               layout = wibox.layout.fixed.horizontal
+                                                            },
+                                                            margins = 10,
+                                                            widget = wibox.container.margin
                                                          },
 
-                                                         {
-                                                            font = "Mononoki Nerd Font Bold 14",
-                                                            text = gears.string.split (value, "|")[2],
-
-                                                            forced_width = 120,
-
-                                                            halign = "center",
-                                                            valign = "center",
-
-                                                            widget = wibox.widget.textbox
-                                                         },
-
-                                                         {
-                                                            image = os.getenv ("HOME") .. "/.config/awesome/icons/feather_white/download.svg",
-                                                            forced_height = 20,
-                                                            forced_width = 20,
-                                                            halign = "right",
-                                                            valign = "center",
-                                                            widget = wibox.widget.imagebox
-                                                         },
-
-                                                         buttons = {
-                                                            awful.button ({}, 1, nil, function ()
-                                                                  awful.spawn.easy_async_with_shell (terminal .. " sudo mount /dev/" .. gears.string.split (value, "|")[1] .. " ~/mnt", function () end)
-                                                            end)
-                                                         },
-
-                                                         layout = wibox.layout.fixed.horizontal
+                                                         bg = colors.background2,
+                                                         widget = wibox.container.background
                                             })
+                                         end
+
+                                         for index, value in pairs (list.children) do
+                                            value:connect_signal("mouse::enter", function () value.bg = colors.violet end)
+                                            value:connect_signal("mouse::leave", function () value.bg = colors.background2 end)
                                          end
    end)
 
